@@ -1,6 +1,6 @@
 from ply import lex, yacc
 
-import views.view
+import qrp.views
 
 # Lexer
 
