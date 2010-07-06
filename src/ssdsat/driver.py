@@ -1,4 +1,4 @@
 import views.parsing
 import sat.cnf
 
-print views.parsing.element_counts("CH3COOH")["H"]
+print views.parsing.pepe("v(x) :- q(x),r(x,X,y,Y)")
