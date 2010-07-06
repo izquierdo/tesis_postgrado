@@ -1,5 +1,9 @@
 from ply import lex, yacc
 
+import views.view
+
+# Lexer
+
 tokens = (
     "CONSTANT",
     "VARIABLE",
@@ -23,9 +27,8 @@ def t_error(t):
 
 lex.lex()
 
-# When parsing starts, try to make a "chemical_equation" because it's
-# the name on left-hand side of the first p_* function definition.
-# The first rule is empty because I let the empty string be valid
+# Parser
+
 def p_view_list(p):
     """
     view_list : view_list view
@@ -91,18 +94,7 @@ def p_error(p):
 
 yacc.yacc(debug=0)
 
-######
+# Helpers
 
-import collections
-
-def pepe(s):
-    """calculates counts for each element in the chemical equation
-    >>> element_counts("CH3COOH")["C"]
-    2
-    >>> element_counts("CH3COOH")["H"]
-    4
-    >>>
-    """
-    
-    result = yacc.parse(s)
-    print result
+def parse(file):
+    return yacc.parse(file.read())
