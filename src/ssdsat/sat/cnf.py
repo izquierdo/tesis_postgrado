@@ -23,7 +23,7 @@ class VariableSet:
 
 class Theory:
     def __init__(self):
-        self.vars = VariableSet
+        self.vars = VariableSet()
         self._clauses = collections.defaultdict(list)
 
     def add_clause(self, clause, type = None):
