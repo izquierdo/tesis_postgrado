@@ -1,6 +1,6 @@
 from ply import lex, yacc
 
-import qrp.views
+from qrp.views import View, Predicate, Argument
 
 # Lexer
 
@@ -45,7 +45,7 @@ def p_view(p):
     """
     view : predicate SUB predicate_list
     """
-    p[0] = (p[1], p[3])
+    p[0] = View(p[1], p[3])
 
 def p_predicate_list(p):
     """
@@ -63,7 +63,7 @@ def p_predicate(p):
     """
     predicate : CONSTANT LPAR argument_list RPAR
     """
-    p[0] = (p[1], p[3])
+    p[0] = Predicate(p[1], p[3])
 
 def p_argument_list(p):
     """
@@ -81,13 +81,13 @@ def p_argument_variable(p):
     """
     argument : VARIABLE
     """
-    p[0] = "unavar"
+    p[0] = Argument(p[1], False)
 
 def p_argument_constant(p):
     """
     argument : CONSTANT
     """
-    p[0] = "unaconst"
+    p[0] = Argument(p[1], True)
 
 def p_error(p):
         raise TypeError("unknown text at %r" % (p.value,))

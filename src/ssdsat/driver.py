@@ -1,4 +1,7 @@
 import qrp.parsing
 import sat.cnf
 
-print qrp.parsing.pepe("v(x) :- q(x),r(x,X,y,Y)")
+from cStringIO import StringIO
+f = StringIO("v(x) :- q(x),r(x,X,y,Y)")
+
+print qrp.parsing.parse(f)

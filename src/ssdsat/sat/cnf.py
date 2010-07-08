@@ -26,7 +26,7 @@ class Theory:
         self.vars = VariableSet()
         self._clauses = collections.defaultdict(list)
 
-    def add_clause(self, clause, type = None):
+    def add_clause(self, clause, weight = 0, type = None):
         for v in clause:
             if v < 1 or v > len(self.vars):
                 raise LookupError
