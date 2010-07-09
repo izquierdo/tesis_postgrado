@@ -24,6 +24,7 @@ def mcd_theory(query, views):
     add_clauses_C4(query, views, t)
     add_clauses_C5(query, views, t)
     add_clauses_C6(query, views, t)
+    add_clauses_C7(query, views, t)
 
     return t
 
@@ -92,6 +93,24 @@ def add_clauses_C6(query, views, t):
                     break
 
             if not can_cover:
-                print "can't cover with view %d the goal %d" % (i+1, j+1)
                 clause = [-t.vs["v", i+1], -t.vs["g", j+1]]
                 t.add_clause(clause)
+
+def add_clauses_C7(query, views, t):
+    """
+    Description: Consistency
+    Formula: v_i /\\ g_j <=> \\/ z_{j,k,i} for appropriate i, j, k
+    """
+
+    for (i, v) in enumerate(views):
+        for j in xrange(1, len(query.body)+1):
+            or_zs = [t.vs["z", j, k, i+1] for k in xrange(1, len(v.body)+1)]
+            imply_clause = [-t.vs["v", i+1], -t.vs["g", j]] + or_zs
+            t.add_clause(imply_clause)
+
+            for k in xrange(1, len(v.body)+1):
+                view_clause = [-t.vs["z", j, k, i+1], t.vs["v", i+1]]
+                t.add_clause(view_clause)
+
+                goal_clause = [-t.vs["z", j, k, i+1], t.vs["g", j]]
+                t.add_clause(goal_clause)
