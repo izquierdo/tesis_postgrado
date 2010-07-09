@@ -28,7 +28,7 @@ class Theory:
 
     def add_clause(self, clause, type = None, weight = 0):
         for v in clause:
-            if v < 1 or v > len(self.vs):
+            if abs(v) < 1 or abs(v) > len(self.vs):
                 raise LookupError
 
         self._clauses[type].append(clause)
@@ -37,7 +37,7 @@ class Theory:
         return self._clauses[type]
 
     def all_clauses(self):
-        clauses = [c for clause_list in self._clauses for c in clause_list]
+        clauses = [c for cl in self._clauses.itervalues() for c in cl]
         return clauses
 
     def write_unweighted_cnf(self, file):
@@ -48,7 +48,7 @@ class Theory:
 
         varn = len(self.vs)
 
-        clauses = self.clauses()
+        clauses = self.all_clauses()
         clsn = len(clauses)
 
         print >> file, "p cnf {vars} {clauses}".format(vars=varn, clauses=clsn)
