@@ -25,6 +25,8 @@ def mcd_theory(query, views):
     add_clauses_C5(query, views, t)
     add_clauses_C6(query, views, t)
     add_clauses_C7(query, views, t)
+    add_clauses_C8(query, views, t)
+    add_clauses_C9(query, views, t)
 
     return t
 
@@ -72,9 +74,9 @@ def add_clauses_C5(query, views, t):
     """
 
     for j in xrange(1, len(query.body)+1):
-        for (i, v) in enumerate(views):
+        for (i, v) in enumerate(views, 1):
             for k, l in combinations(xrange(1, len(v.body)+1), r=2):
-                clause = [-t.vs["z", j, k, i+1], -t.vs["z", j, l, i+1]]
+                clause = [-t.vs["z", j, k, i], -t.vs["z", j, l, i]]
                 t.add_clause(clause)
 
 def add_clauses_C6(query, views, t):
@@ -83,8 +85,8 @@ def add_clauses_C6(query, views, t):
     Formula: v_i => -g_j if query goal j can't be covered by view i
     """
 
-    for (j, query_pred) in enumerate(query.body):
-        for (i, v) in enumerate(views):
+    for (j, query_pred) in enumerate(query.body, 1):
+        for (i, v) in enumerate(views, 1):
             can_cover = False
 
             for view_pred in v.body:
@@ -93,7 +95,7 @@ def add_clauses_C6(query, views, t):
                     break
 
             if not can_cover:
-                clause = [-t.vs["v", i+1], -t.vs["g", j+1]]
+                clause = [-t.vs["v", i], -t.vs["g", j]]
                 t.add_clause(clause)
 
 def add_clauses_C7(query, views, t):
@@ -102,15 +104,32 @@ def add_clauses_C7(query, views, t):
     Formula: v_i /\\ g_j <=> \\/ z_{j,k,i} for appropriate i, j, k
     """
 
-    for (i, v) in enumerate(views):
+    for (i, v) in enumerate(views, 1):
         for j in xrange(1, len(query.body)+1):
-            or_zs = [t.vs["z", j, k, i+1] for k in xrange(1, len(v.body)+1)]
-            imply_clause = [-t.vs["v", i+1], -t.vs["g", j]] + or_zs
+            or_zs = [t.vs["z", j, k, i] for k in xrange(1, len(v.body)+1)]
+            imply_clause = [-t.vs["v", i], -t.vs["g", j]] + or_zs
             t.add_clause(imply_clause)
 
             for k in xrange(1, len(v.body)+1):
-                view_clause = [-t.vs["z", j, k, i+1], t.vs["v", i+1]]
+                view_clause = [-t.vs["z", j, k, i], t.vs["v", i]]
                 t.add_clause(view_clause)
 
-                goal_clause = [-t.vs["z", j, k, i+1], t.vs["g", j]]
+                goal_clause = [-t.vs["z", j, k, i], t.vs["g", j]]
                 t.add_clause(goal_clause)
+
+def add_clauses_C8(query, views, t):
+    """
+    Description: Dead variables
+    Formula: v_i => -t_{x,y} for all x, y with y not in view i
+    """
+
+    print "UNIMPLEMENTED!!!"
+    pass
+
+def add_clauses_C9(query, views, t):
+    for x in query.varset():
+        for (i, v) in enumerate(views, 1):
+            for y, yp in combinations(v.varset(), r=2):
+                if v.is_existential(y) and v.is_existential(yp):
+                    clause = [-t.vs["v", i], -t.vs["t", x, y], -t.vs["t", x, yp]]
+                    t.add_clause(clause)

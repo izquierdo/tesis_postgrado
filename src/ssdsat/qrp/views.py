@@ -7,6 +7,17 @@ class View:
         body_str = ",".join(map(str, self.body))
         return "{head} :- {body}".format(head = self.head, body = body_str)
 
+    def varset(self):
+        s = set()
+
+        s.update([a for a in self.head.arguments if not a.constant])
+        s.update([a for g in self.body for a in g.arguments if not a.constant])
+
+        return s
+
+    def is_existential(self, a):
+        return a not in self.head.arguments
+
 class Predicate:
     def __init__(self, name, arguments):
         self.name = name
