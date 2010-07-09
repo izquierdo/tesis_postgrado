@@ -23,6 +23,7 @@ def mcd_theory(query, views):
     add_clauses_C3(query, views, t)
     add_clauses_C4(query, views, t)
     add_clauses_C5(query, views, t)
+    add_clauses_C6(query, views, t)
 
     return t
 
@@ -69,4 +70,28 @@ def add_clauses_C5(query, views, t):
     Formula: z_{j,k,i} => -z_{j,l,i} for appropriate i, j, k, l with k != l
     """
 
-    pass
+    for j in xrange(1, len(query.body)+1):
+        for (i, v) in enumerate(views):
+            for k, l in combinations(xrange(1, len(v.body)+1), r=2):
+                clause = [-t.vs["z", j, k, i+1], -t.vs["z", j, l, i+1]]
+                t.add_clause(clause)
+
+def add_clauses_C6(query, views, t):
+    """
+    Description: Scope of views
+    Formula: v_i => -g_j if query goal j can't be covered by view i
+    """
+
+    for (j, query_pred) in enumerate(query.body):
+        for (i, v) in enumerate(views):
+            can_cover = False
+
+            for view_pred in v.body:
+                if view_pred.name == query_pred.name and view_pred.arity == query_pred.arity:
+                    can_cover = True
+                    break
+
+            if not can_cover:
+                print "can't cover with view %d the goal %d" % (i+1, j+1)
+                clause = [-t.vs["v", i+1], -t.vs["g", j+1]]
+                t.add_clause(clause)

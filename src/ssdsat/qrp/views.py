@@ -16,6 +16,8 @@ class Predicate:
         args_str = ",".join(map(str, self.arguments))
         return "{name}({args})".format(name = self.name, args = args_str)
 
+    arity = property(lambda self : len(self.arguments))
+
 class Argument:
     def __init__(self, name, constant):
         self.name = name
