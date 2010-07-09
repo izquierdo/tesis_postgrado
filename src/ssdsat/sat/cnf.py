@@ -23,12 +23,12 @@ class VariableSet:
 
 class Theory:
     def __init__(self):
-        self.vars = VariableSet()
+        self.vs = VariableSet()
         self._clauses = collections.defaultdict(list)
 
-    def add_clause(self, clause, weight = 0, type = None):
+    def add_clause(self, clause, type = None, weight = 0):
         for v in clause:
-            if v < 1 or v > len(self.vars):
+            if v < 1 or v > len(self.vs):
                 raise LookupError
 
         self._clauses[type].append(clause)
@@ -46,7 +46,7 @@ class Theory:
         format.
         """
 
-        varn = len(self.vars)
+        varn = len(self.vs)
 
         clauses = self.clauses()
         clsn = len(clauses)
