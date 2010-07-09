@@ -27,6 +27,7 @@ def mcd_theory(query, views):
     add_clauses_C7(query, views, t)
     add_clauses_C8(query, views, t)
     add_clauses_C9(query, views, t)
+    add_clauses_C10(query, views, t)
 
     return t
 
@@ -127,9 +128,32 @@ def add_clauses_C8(query, views, t):
     pass
 
 def add_clauses_C9(query, views, t):
+    """
+    Description: Head homomorphism
+    Formula: v_i /\\ t_{x,y} => -t{x,yp} for all existential y, yp in view i
+    """
+
     for x in query.varset():
         for (i, v) in enumerate(views, 1):
             for y, yp in combinations(v.varset(), r=2):
                 if v.is_existential(y) and v.is_existential(yp):
-                    clause = [-t.vs["v", i], -t.vs["t", x, y], -t.vs["t", x, yp]]
+                    clause = [-t.vs["v", i], -t.vs["t", x, y, i], -t.vs["t", x, yp, i]]
                     t.add_clause(clause)
+
+def add_clauses_C10(query, views, t):
+    """
+    Description: Head homomorphism
+    Formula: v_i /\\ t_{x,y} => -t{x,yp} for all existential y, yp in view i
+    """
+
+    for (i, v) in enumerate(views, 1):
+        for y in v.varset():
+            if not v.is_existential(y):
+                continue
+
+            for x in query.varset():
+                if query.is_existential(x):
+                    continue
+
+            clause = [-t.vs["v", i], -t["t", x, y, i]]
+            t.add_clause(clause)
