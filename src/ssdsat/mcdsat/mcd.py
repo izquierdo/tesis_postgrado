@@ -65,7 +65,8 @@ def add_clauses_C4(query, views, t):
     """
 
     for i in xrange(1, len(views)+1):
-        clause = [-t.vs["v", i]] + [t.vs["g", j+1] for j in xrange(len(query.body))]
+        or_gs = [t.vs["g", j+1] for j in xrange(len(query.body))]
+        clause = [-t.vs["v", i]] + or_gs
         t.add_clause(clause)
 
 def add_clauses_C5(query, views, t):
@@ -86,12 +87,12 @@ def add_clauses_C6(query, views, t):
     Formula: v_i => -g_j if query goal j can't be covered by view i
     """
 
-    for (j, query_pred) in enumerate(query.body, 1):
+    for (j, query_p) in enumerate(query.body, 1):
         for (i, v) in enumerate(views, 1):
             can_cover = False
 
-            for view_pred in v.body:
-                if view_pred.name == query_pred.name and view_pred.arity == query_pred.arity:
+            for p in v.body:
+                if p.name == query_p.name and p.arity == query_p.arity:
                     can_cover = True
                     break
 
@@ -137,13 +138,15 @@ def add_clauses_C9(query, views, t):
         for (i, v) in enumerate(views, 1):
             for y, yp in combinations(v.varset(), r=2):
                 if v.is_existential(y) and v.is_existential(yp):
-                    clause = [-t.vs["v", i], -t.vs["t", x, y, i], -t.vs["t", x, yp, i]]
+                    or_ts =  [-t.vs["t", x, y, i], -t.vs["t", x, yp, i]]
+                    clause = [-t.vs["v", i]] + or_ts
                     t.add_clause(clause)
 
 def add_clauses_C10(query, views, t):
     """
-    Description: Head homomorphism
-    Formula: v_i /\\ t_{x,y} => -t{x,yp} for all existential y, yp in view i
+    Description: Distinguished
+    Formula: v_i => -t_{x,y} for x distinguished in the query and y existential
+    in view i
     """
 
     for (i, v) in enumerate(views, 1):
