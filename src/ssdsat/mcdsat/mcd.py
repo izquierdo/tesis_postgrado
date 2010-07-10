@@ -160,3 +160,34 @@ def add_clauses_C10(query, views, t):
 
             clause = [-t.vs["v", i], -t["t", x, y, i]]
             t.add_clause(clause)
+
+def add_clauses_C11(query, views, t):
+    """
+    Description: Existential
+    Formula: v_i /\\ t_{x,y} => g_j for existential y in view i and goals j
+    that contain existential x in the query
+    """
+
+    for (i, v) in enumerate(views, 1):
+        for y in v.varset():
+            if not v.is_existential(y):
+                continue
+
+            for x in query.varset():
+                if not query.is_existential(x):
+                    continue
+
+                for (j, g) in enumerate(query.body, 1):
+                    if x not in g.arguments:
+                        continue
+
+                    clause = [-t.vs["v", i], -t.vs["t", x, y, i], t.vs["g", j]]
+                    t.add_clause(clause)
+
+def add_clauses_C12(query, views, t):
+    """
+    Description: Matching
+    Formula: v_i /\\ z_{j,k,i} => t_{x,y} for x and y that must match if goal j
+    in the query is covered by goal k in view i
+    """
+
