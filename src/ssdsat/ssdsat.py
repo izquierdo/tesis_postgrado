@@ -1,5 +1,6 @@
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
+import os
 
 import mcdsat.mcd
 import options
@@ -15,7 +16,7 @@ def compile_ddnnf(theory):
                 "-reduce",
                 "-dt_method", "4"]
 
-        c2d_process = Popen(args)
+        c2d_process = Popen(args, stdout = open(os.devnull, 'r'))
         c2d_process.wait()
 
         nnf_filename = "{0}.nnf".format(cnf_file.name)
@@ -40,7 +41,6 @@ def enumerate_models(nnf_filename):
             break
 
     for (i, e) in enumerate(reversed(models)):
-        print e
         if e.strip() == "---- models end ----":
             end = len(models) - i - 1
 
