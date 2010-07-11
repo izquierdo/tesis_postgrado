@@ -6,15 +6,17 @@ import sat.cnf
 import mcdsat.mcd
 import sys
 
-viewf = StringIO("v1(X) :- r1(X),r2(X) v2(X) :- r3(X) v3(X) :- r1(X)")
-views = qrp.parsing.parse(viewf)
+import ssdsat
 
-queryf = StringIO("q(X) :- r1(X),r3(x)")
-query = qrp.parsing.parse(queryf)[0]
+#viewf = StringIO("v1(X) :- r1(X),r2(X) v2(X) :- r3(X) v3(X) :- r1(X)")
+#views = qrp.parsing.parse(viewf)
 
-t = mcdsat.mcd.mcd_theory(query, views)
+#queryf = StringIO("q(X) :- r1(X),r3(x)")
+#query = qrp.parsing.parse(queryf)[0]
 
-t.write_unweighted_cnf(sys.stdout)
+#t = mcdsat.mcd.mcd_theory(query, views)
+
+#t.write_unweighted_cnf(sys.stdout)
 
 def usage():
     print "usage" # TODO
@@ -46,7 +48,7 @@ def get_options(argv):
             target = arg
 
     if not views or not queries or not target:
-        sys.exit(2)
+        sys.exit(1)
 
     return (views, queries, ontology, costs, preferences, target)
 
@@ -59,7 +61,20 @@ def main(argv):
     with open(queries) as queryfile:
         querylist = qrp.parsing.parse(queryfile)
 
-    print querylist[0]
+    targets = {}
+    targets["MCD"] = ssdsat.mcd
+
+    if target == "MCD":
+        targets[target](views, queries, ontology, costs, preferences)
+    elif target == "RW":
+        pass
+    elif target == "BESTRW":
+        pass
+    elif target == "BIGBESTRW":
+        pass
+    else:
+        usage()
+        sys.exit(1)
 
 if __name__ == "__main__":
     main(sys.argv)
