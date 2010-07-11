@@ -1,25 +1,16 @@
 import getopt
-
-from cStringIO import StringIO#TODO debugging only
-import qrp.parsing
-import sat.cnf
-import mcdsat.mcd
+import logging
 import sys
 
+import qrp.parsing
 import ssdsat
 
-#viewf = StringIO("v1(X) :- r1(X),r2(X) v2(X) :- r3(X) v3(X) :- r1(X)")
-#views = qrp.parsing.parse(viewf)
-
-#queryf = StringIO("q(X) :- r1(X),r3(x)")
-#query = qrp.parsing.parse(queryf)[0]
-
-#t = mcdsat.mcd.mcd_theory(query, views)
-
-#t.write_unweighted_cnf(sys.stdout)
-
 def usage():
-    print "usage" # TODO
+    usage_str = "Usage: {program} -t target -v views -q query [-o ontology] [-c costs] [-p prefs]\n"
+    usage_str += " where target is one of MCD, RW\n"
+    usage_str += " and all other parameters are filenames\n"
+
+    print usage_str.format(program = sys.argv[0]),
 
 def get_options(argv):
     try:
@@ -50,10 +41,10 @@ def get_options(argv):
     if not views or not queries or not target:
         sys.exit(1)
 
-    return (views, queries, ontology, costs, preferences, target)
+    return (target, views, queries, ontology, costs, preferences)
 
 def main(argv):
-    (views, queries, ontology, costs, preferences, target) = get_options(argv[1:])
+    (target, views, queries, ontology, costs, preferences) = get_options(argv[1:])
 
     with open(views) as viewfile:
         viewlist = qrp.parsing.parse(viewfile)
@@ -64,17 +55,13 @@ def main(argv):
     targets = {}
     targets["MCD"] = ssdsat.mcd
 
-    if target == "MCD":
-        targets[target](viewlist, querylist, ontology, costs, preferences)
-    elif target == "RW":
-        pass
-    elif target == "BESTRW":
-        pass
-    elif target == "BIGBESTRW":
-        pass
-    else:
+    try:
+        f = targets[target]
+    except KeyError:
         usage()
         sys.exit(1)
+
+    f(viewlist, querylist, ontology, costs, preferences)
 
 if __name__ == "__main__":
     main(sys.argv)
