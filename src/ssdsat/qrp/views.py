@@ -29,6 +29,15 @@ class Predicate:
 
     arity = property(lambda self : len(self.arguments))
 
+    def unify(self, other, ontology = None):
+        if self.name != other.name:
+            return None
+
+        if self.arity != other.arity:
+            return None
+
+        return zip(self.arguments, other.arguments)
+
 class Argument:
     def __init__(self, name, constant):
         self.name = name

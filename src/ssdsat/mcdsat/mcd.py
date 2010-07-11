@@ -89,6 +89,7 @@ def add_clauses_C6(query, views, t):
 
     for (j, query_p) in enumerate(query.body, 1):
         for (i, v) in enumerate(views, 1):
+            #TODO use Predicate.unify here instead
             can_cover = False
 
             for p in v.body:
@@ -158,7 +159,7 @@ def add_clauses_C10(query, views, t):
                 if query.is_existential(x):
                     continue
 
-            clause = [-t.vs["v", i], -t["t", x, y, i]]
+            clause = [-t.vs["v", i], -t.vs["t", x, y, i]]
             t.add_clause(clause)
 
 def add_clauses_C11(query, views, t):
@@ -191,3 +192,14 @@ def add_clauses_C12(query, views, t):
     in the query is covered by goal k in view i
     """
 
+    for (i, v) in enumerate(views, 1):
+        for (k, p) in enumerate(v.body, 1):
+            for (j, g) in enumerate(query.body, 1):
+                mapping = g.unify(p)
+
+                if not mapping:
+                    continue
+
+                for (x, y) in mapping:
+                    clause = [-t.vs["v", i], -t.vs["z", j, k, i], t.vs["t", x, y, i]]
+                    t.add_clause(clause)
