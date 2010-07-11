@@ -65,7 +65,7 @@ def main(argv):
     targets["MCD"] = ssdsat.mcd
 
     if target == "MCD":
-        targets[target](views, queries, ontology, costs, preferences)
+        targets[target](viewlist, querylist, ontology, costs, preferences)
     elif target == "RW":
         pass
     elif target == "BESTRW":
