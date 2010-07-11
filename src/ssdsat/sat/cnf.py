@@ -4,6 +4,7 @@ import cPickle
 class VariableSet:
     def __init__(self):
         self._vars = collections.defaultdict(self._id_generator().next)
+        self._reverse = {}
 
     def _id_generator(self):
         id = 0
@@ -16,7 +17,12 @@ class VariableSet:
         return item in self._vars
 
     def __getitem__(self, key):
-        return self._vars[key]
+        val = self._vars[key]
+
+        if val not in self._reverse:
+            self._reverse[val] = key
+
+        return val
     
     def __len__(self):
         return len(self._vars)
