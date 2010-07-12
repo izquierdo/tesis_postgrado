@@ -12,6 +12,8 @@ n: number of views
 m: number of query goals
 """
 
+#TODO check usage of varset when argset is intended!
+
 import logging
 
 from sat.cnf import Theory
@@ -38,6 +40,8 @@ def mcd_theory(query, views):
     add_clauses_C10(query, views, t)
     add_clauses_C11(query, views, t)
     add_clauses_C12(query, views, t)
+    add_clauses_C13(query, views, t)
+    add_clauses_C14(query, views, t)
 
     # C8 clauses are dependent on existing 't' variables
     add_clauses_C8(query, views, t)
@@ -254,3 +258,42 @@ def add_clauses_C12(query, views, t):
                 else:
                     clause = [-t.vs['v', i], -t.vs['z', j, k, i]]
                     t.add_clause(clause)
+
+def add_clauses_C13(query, views, t):
+    """
+    Description: 1-1 on existential vars
+    Formula: v_i /\\ t_{x,y} => -t_{xp,y} for x existential in the query, xp
+    in the query and y in view i
+    """
+
+    logging.debug("adding clauses of type C13")
+
+    for (i, v) in enumerate(views, 1):
+        for x in query.varset():
+            if not query.is_existential(x):
+                continue
+
+            for xp in query.varset():
+                if x == xp:
+                    continue
+
+                for y in v.varset():
+                    clause = [-t.vs['v', i], -t.vs['t', x, y, i],
+                            -t.vs['t', xp, y, i]]
+                    t.add_clause(clause)
+
+
+def add_clauses_C14(query, views, t):
+    """
+    Description: If the view has no existential variables, the MCD covers at
+    most one goal.
+    Formula: v_i /\\ g_j => -g_k if v_i has no existential variables
+    """
+
+    logging.debug("adding clauses of type C14")
+
+    for (i, v) in enumerate(views, 1):
+        if len(v.existential_varset()) == 0:
+            for j, k in combinations(xrange(1, len(query.body)+1), r=2):
+                clause = [-t.vs['v', i], -t.vs['g', j], -t.vs['g', k]]
+                t.add_clause(clause)

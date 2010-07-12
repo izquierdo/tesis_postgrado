@@ -15,6 +15,9 @@ class View:
 
         return s
 
+    def existential_varset(self):
+        return set([v for v in self.varset() if self.is_existential(v)])
+
     def is_existential(self, a):
         return a not in self.head.arguments
 
