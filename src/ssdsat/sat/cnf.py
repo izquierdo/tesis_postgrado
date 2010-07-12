@@ -1,5 +1,8 @@
 import collections
 import cPickle
+import logging
+
+import options
 
 class VariableSet:
     def __init__(self):
@@ -27,6 +30,12 @@ class VariableSet:
     def __len__(self):
         return len(self._vars)
 
+    def reverse(self, val):
+        if val < 0:
+            return "-" + str(self._reverse[abs(val)])
+
+        return str(self._reverse[val])
+
 class Theory:
     def __init__(self):
         self.vs = VariableSet()
@@ -36,6 +45,9 @@ class Theory:
         for v in clause:
             if abs(v) < 1 or abs(v) > len(self.vs):
                 raise LookupError
+
+        if options.debug:
+            logging.debug(map(lambda e : self.vs.reverse(e), clause))
 
         self._clauses[type].append(clause)
 

@@ -44,7 +44,8 @@ def enumerate_models(nnf_filename):
         if e.strip() == "---- models end ----":
             end = len(models) - i - 1
 
-    return map(lambda s : s.strip().strip("{}").split(), models[begin:end])
+    cleanup = lambda m : map(int, m.strip().strip("{}").split())
+    return map(cleanup, models[begin:end])
 
 def mcd(views, queries, ontology, costs, preferences):
     # generate the MCD theory

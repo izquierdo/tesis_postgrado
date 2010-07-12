@@ -2,6 +2,7 @@ import getopt
 import logging
 import sys
 
+import options
 import qrp.parsing
 import ssdsat
 
@@ -44,6 +45,11 @@ def get_options(argv):
     return (target, views, queries, ontology, costs, preferences)
 
 def main(argv):
+    if options.debug:
+        logging.basicConfig(level=logging.DEBUG)
+    else:
+        logging.basicConfig(level=logging.INFO)
+
     (target, views, queries, ontology, costs, preferences) = get_options(argv[1:])
 
     with open(views) as viewfile:
