@@ -247,9 +247,10 @@ def add_clauses_C12(query, views, t):
             for (j, g) in enumerate(query.body, 1):
                 mapping = g.unify(p)
 
-                if not mapping:
-                    continue
-
-                for (x, y) in mapping:
-                    clause = [-t.vs['v', i], -t.vs['z', j, k, i], t.vs['t', x, y, i]]
+                if mapping:
+                    for (x, y) in mapping:
+                        clause = [-t.vs['v', i], -t.vs['z', j, k, i], t.vs['t', x, y, i]]
+                        t.add_clause(clause)
+                else:
+                    clause = [-t.vs['v', i], -t.vs['z', j, k, i]]
                     t.add_clause(clause)
