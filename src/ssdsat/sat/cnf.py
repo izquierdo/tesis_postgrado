@@ -30,6 +30,9 @@ class VariableSet:
     def __len__(self):
         return len(self._vars)
 
+    def __iter__(self):
+        return self._vars.iterkeys()
+
     def reverse(self, val):
         if val < 0:
             return "-" + str(self._reverse[abs(val)])

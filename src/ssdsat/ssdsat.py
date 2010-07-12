@@ -5,6 +5,23 @@ import os
 import mcdsat.mcd
 import options
 
+# Possible SSDSAT targets
+
+def mcd(views, queries, ontology, costs, preferences):
+    # generate the MCD theory
+    t = mcdsat.mcd.mcd_theory(queries[0], views)
+
+    # feed the theory to the d-DNNF compiler
+    nnf_filename = compile_ddnnf(t)
+
+    # enumerate the models of the d-DNNF theory
+    models = enumerate_models(nnf_filename)
+
+    for m in models:
+        print map(lambda v : t.vs.reverse(v), m)
+
+# Supporting methods
+
 def compile_ddnnf(theory):
     with NamedTemporaryFile(prefix="ssdsat.", suffix=".cnf") as cnf_file:
         theory.write_unweighted_cnf(cnf_file)
@@ -24,6 +41,12 @@ def compile_ddnnf(theory):
     return nnf_filename
 
 def enumerate_models(nnf_filename):
+    """
+    Enumerate the models of the d-DNNF theory specified at the given file and
+    return them in a list. Each model is encoded as a list of the integer IDs
+    of the variables made true in it.
+    """
+
     args = [options.models,
             "--write-models",
             "--num", str(options.max_models),
@@ -46,15 +69,3 @@ def enumerate_models(nnf_filename):
 
     cleanup = lambda m : map(int, m.strip().strip("{}").split())
     return map(cleanup, models[begin:end])
-
-def mcd(views, queries, ontology, costs, preferences):
-    # generate the MCD theory
-    t = mcdsat.mcd.mcd_theory(queries[0], views)
-
-    # feed the theory to the d-DNNF compiler
-    nnf_filename = compile_ddnnf(t)
-
-    # enumerate the models of the d-DNNF theory
-    models = enumerate_models(nnf_filename)
-
-    print models

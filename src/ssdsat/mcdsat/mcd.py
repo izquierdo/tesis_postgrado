@@ -1,9 +1,9 @@
 """
 * Types of variables generated:
-    - ["v", i] -- view i is used
-    - ["g", i] -- goal i is covered by a view in use
-    - ["z", j, k, i] -- goal j in the query is covered by goal k of view i
-    - ["t", x, y, i] -- there's a mapping between variable x of the query and
+    - ['v', i] -- view i is used
+    - ['g', i] -- goal i is covered by a view in use
+    - ['z', j, k, i] -- goal j in the query is covered by goal k of view i
+    - ['t', x, y, i] -- there's a mapping between variable x of the query and
       variable y of view i
 
 * Types of clauses ge
@@ -34,11 +34,13 @@ def mcd_theory(query, views):
     add_clauses_C5(query, views, t)
     add_clauses_C6(query, views, t)
     add_clauses_C7(query, views, t)
-    add_clauses_C8(query, views, t)
     add_clauses_C9(query, views, t)
     add_clauses_C10(query, views, t)
     add_clauses_C11(query, views, t)
     add_clauses_C12(query, views, t)
+
+    # C8 clauses are dependent on existing 't' variables
+    add_clauses_C8(query, views, t)
 
     return t
 
@@ -54,7 +56,7 @@ def add_clauses_C1(query, views, t):
 
     logging.debug("adding clauses of type C1")
 
-    t.add_clause([t.vs["v", i] for i in xrange(0, len(views)+1)])
+    t.add_clause([t.vs['v', i] for i in xrange(0, len(views)+1)])
 
 def add_clauses_C2(query, views, t):
     """
@@ -65,7 +67,7 @@ def add_clauses_C2(query, views, t):
     logging.debug("adding clauses of type C2")
 
     for i, j in combinations(xrange(0, len(views)+1), r=2):
-        t.add_clause([-t.vs["v", i], -t.vs["v", j]])
+        t.add_clause([-t.vs['v', i], -t.vs['v', j]])
 
 def add_clauses_C3(query, views, t):
     """
@@ -76,7 +78,7 @@ def add_clauses_C3(query, views, t):
     logging.debug("adding clauses of type C3")
 
     for i in xrange(len(query.body)):
-        clause = [-t.vs["v", 0], -t.vs["g", i+1]]
+        clause = [-t.vs['v', 0], -t.vs['g', i+1]]
         t.add_clause(clause)
 
 def add_clauses_C4(query, views, t):
@@ -88,8 +90,8 @@ def add_clauses_C4(query, views, t):
     logging.debug("adding clauses of type C4")
 
     for i in xrange(1, len(views)+1):
-        or_gs = [t.vs["g", j+1] for j in xrange(len(query.body))]
-        clause = [-t.vs["v", i]] + or_gs
+        or_gs = [t.vs['g', j+1] for j in xrange(len(query.body))]
+        clause = [-t.vs['v', i]] + or_gs
         t.add_clause(clause)
 
 def add_clauses_C5(query, views, t):
@@ -103,7 +105,7 @@ def add_clauses_C5(query, views, t):
     for j in xrange(1, len(query.body)+1):
         for (i, v) in enumerate(views, 1):
             for k, l in combinations(xrange(1, len(v.body)+1), r=2):
-                clause = [-t.vs["z", j, k, i], -t.vs["z", j, l, i]]
+                clause = [-t.vs['z', j, k, i], -t.vs['z', j, l, i]]
                 t.add_clause(clause)
 
 def add_clauses_C6(query, views, t):
@@ -125,7 +127,7 @@ def add_clauses_C6(query, views, t):
                     break
 
             if not can_cover:
-                clause = [-t.vs["v", i], -t.vs["g", j]]
+                clause = [-t.vs['v', i], -t.vs['g', j]]
                 t.add_clause(clause)
 
 def add_clauses_C7(query, views, t):
@@ -138,15 +140,15 @@ def add_clauses_C7(query, views, t):
 
     for (i, v) in enumerate(views, 1):
         for j in xrange(1, len(query.body)+1):
-            or_zs = [t.vs["z", j, k, i] for k in xrange(1, len(v.body)+1)]
-            imply_clause = [-t.vs["v", i], -t.vs["g", j]] + or_zs
+            or_zs = [t.vs['z', j, k, i] for k in xrange(1, len(v.body)+1)]
+            imply_clause = [-t.vs['v', i], -t.vs['g', j]] + or_zs
             t.add_clause(imply_clause)
 
             for k in xrange(1, len(v.body)+1):
-                view_clause = [-t.vs["z", j, k, i], t.vs["v", i]]
+                view_clause = [-t.vs['z', j, k, i], t.vs['v', i]]
                 t.add_clause(view_clause)
 
-                goal_clause = [-t.vs["z", j, k, i], t.vs["g", j]]
+                goal_clause = [-t.vs['z', j, k, i], t.vs['g', j]]
                 t.add_clause(goal_clause)
 
 def add_clauses_C8(query, views, t):
@@ -157,8 +159,17 @@ def add_clauses_C8(query, views, t):
 
     logging.debug("adding clauses of type C8")
 
-    print "UNIMPLEMENTED!!!"
-    pass
+    for var in t.vs:
+        if var[0] != 't':
+            continue
+        
+        for i in xrange(len(views)+1):
+            if i == var[-1]:
+                # this is a mapping used for view i
+                continue
+
+            clause = [-t.vs['v', i], -t.vs[var]]
+            t.add_clause(clause)
 
 def add_clauses_C9(query, views, t):
     """
@@ -172,8 +183,8 @@ def add_clauses_C9(query, views, t):
         for (i, v) in enumerate(views, 1):
             for y, yp in combinations(v.varset(), r=2):
                 if v.is_existential(y) and v.is_existential(yp):
-                    or_ts =  [-t.vs["t", x, y, i], -t.vs["t", x, yp, i]]
-                    clause = [-t.vs["v", i]] + or_ts
+                    or_ts =  [-t.vs['t', x, y, i], -t.vs['t', x, yp, i]]
+                    clause = [-t.vs['v', i]] + or_ts
                     t.add_clause(clause)
 
 def add_clauses_C10(query, views, t):
@@ -194,7 +205,7 @@ def add_clauses_C10(query, views, t):
                 if query.is_existential(x):
                     continue
 
-            clause = [-t.vs["v", i], -t.vs["t", x, y, i]]
+            clause = [-t.vs['v', i], -t.vs['t', x, y, i]]
             t.add_clause(clause)
 
 def add_clauses_C11(query, views, t):
@@ -219,7 +230,7 @@ def add_clauses_C11(query, views, t):
                     if x not in g.arguments:
                         continue
 
-                    clause = [-t.vs["v", i], -t.vs["t", x, y, i], t.vs["g", j]]
+                    clause = [-t.vs['v', i], -t.vs['t', x, y, i], t.vs['g', j]]
                     t.add_clause(clause)
 
 def add_clauses_C12(query, views, t):
@@ -240,5 +251,5 @@ def add_clauses_C12(query, views, t):
                     continue
 
                 for (x, y) in mapping:
-                    clause = [-t.vs["v", i], -t.vs["z", j, k, i], t.vs["t", x, y, i]]
+                    clause = [-t.vs['v', i], -t.vs['z', j, k, i], t.vs['t', x, y, i]]
                     t.add_clause(clause)
