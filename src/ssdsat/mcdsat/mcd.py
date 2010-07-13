@@ -163,10 +163,7 @@ def add_clauses_C8(query, views, t):
 
     logging.debug("adding clauses of type C8")
 
-    for var in t.vs:
-        if var[0] != 't':
-            continue
-        
+    for var in t.vs.by_type('t'):
         for i in xrange(len(views)+1):
             if i == var[-1]:
                 # this is a mapping used for view i
