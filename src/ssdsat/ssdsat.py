@@ -1,6 +1,7 @@
 from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
 import os
+import logging
 
 import mcdsat.mcd
 import options
@@ -46,6 +47,8 @@ def enumerate_models(nnf_filename):
     return them in a list. Each model is encoded as a list of the integer IDs
     of the variables made true in it.
     """
+
+    logging.info("enumerating models")
 
     args = [options.models,
             "--write-models",
