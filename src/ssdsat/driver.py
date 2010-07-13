@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import getopt
 import logging
 import sys
@@ -46,9 +48,9 @@ def get_options(argv):
 
 def main(argv):
     if options.debug:
-        logging.basicConfig(level=logging.DEBUG)
+        logging.basicConfig(level=logging.DEBUG, format="%(message)s")
     else:
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.INFO, format="%(message)s")
 
     (target, views, queries, ontology, costs, preferences) = get_options(argv[1:])
 
