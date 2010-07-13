@@ -33,6 +33,14 @@ class VariableSet:
     def __iter__(self):
         return self._vars.iterkeys()
 
+    def by_type(self, t):
+        """
+        The type of a variable is the value of its first element.
+        """
+
+        return [v for v in self._vars.iterkeys() if v[0] == t]
+
+
     def reverse(self, val):
         if val < 0:
             return "-" + str(self._reverse[abs(val)])
