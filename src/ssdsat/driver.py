@@ -9,8 +9,8 @@ import qrp.parsing
 import ssdsat
 
 def usage():
-    usage_str = "Usage: {program} -t target -v views -q query [-o ontology] [-c costs] [-p prefs]\n"
-    usage_str += " where target is one of MCD, RW\n"
+    usage_str = "Usage: {program} -t <target> -v <views> -q <query> [-o <ontology>] [-c <costs>] [-p <prefs>]\n"
+    usage_str += " where <target> is one of the following: MCD, RW\n"
     usage_str += " and all other parameters are filenames\n"
 
     print usage_str.format(program = sys.argv[0]),
@@ -42,6 +42,7 @@ def get_options(argv):
             target = arg
 
     if not views or not queries or not target:
+        usage()
         sys.exit(1)
 
     return (target, views, queries, ontology, costs, preferences)
