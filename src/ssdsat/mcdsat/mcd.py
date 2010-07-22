@@ -46,6 +46,9 @@ def mcd_theory(query, views):
     # C8 clauses are dependent on existing 't' variables
     add_clauses_C8(query, views, t)
 
+    # extra clauses (not appearing in the McdSat paper)
+    add_clauses_E1(query, views, t)
+
     return t
 
 def mcd_from_model(t):
@@ -294,3 +297,26 @@ def add_clauses_C14(query, views, t):
             for j, k in combinations(xrange(1, len(query.body)+1), r=2):
                 clause = [-t.vs['v', i], -t.vs['g', j], -t.vs['g', k]]
                 t.add_clause(clause)
+
+def add_clauses_E1(query, views, t):
+    """
+    Description: Remove unnecesary mappings
+    Formula: t_{x,y} /\\ v_i => (\/ z_{j,k,i} for j, k where mapping t_{x,y} is
+    needed)
+    """
+
+    logging.debug("adding clauses of type E1")
+
+    needed = {}
+
+    for (i, v) in enumerate(views, 1):
+        for (k, p) in enumerate(v.body, 1):
+            for (j, g) in enumerate(query.body, 1):
+                mapping = g.unify(p)
+
+                if mapping:
+                    for (x, y) in mapping:
+                        needed.setdefault((-t.vs['v', i], -t.vs['t', x, y, i]), []).append(t.vs['z', j, k, i])
+
+    for ((v_var, t_var), z_vars) in needed.iteritems():
+        t.add_clause([v_var, t_var] + z_vars)

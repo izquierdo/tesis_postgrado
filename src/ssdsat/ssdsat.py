@@ -24,6 +24,10 @@ def mcd(views, queries, ontology, costs, preferences):
 # Supporting methods
 
 def compile_ddnnf(theory):
+    """
+    Returns the filename of the d-DNNF #TODO better to return file-like object?
+    """
+
     with NamedTemporaryFile(prefix="ssdsat.", suffix=".cnf") as cnf_file:
         theory.write_unweighted_cnf(cnf_file)
         cnf_file.seek(0)

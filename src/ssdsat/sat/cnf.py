@@ -40,12 +40,14 @@ class VariableSet:
 
         return [v for v in self._vars.iterkeys() if v[0] == t]
 
-
     def reverse(self, val):
         if val < 0:
             return "-" + str(self._reverse[abs(val)])
 
         return str(self._reverse[val])
+
+    def get(self, *args):
+        return self._vars.get(args)
 
 class Theory:
     def __init__(self):
@@ -53,9 +55,20 @@ class Theory:
         self._clauses = collections.defaultdict(list)
 
     def add_clause(self, clause, type = None, weight = 0):
+        """
+        Add a clause to this theory, optionally specifying its weight.
+
+        If an element of clause isn't in the variable set (vs), LookupError is
+        raised. If clause contains None, then the clause is silently discarded.
+        """
+
         for v in clause:
             if abs(v) < 1 or abs(v) > len(self.vs):
                 raise LookupError
+
+        if None in clause:
+            # fail silently
+            return
 
         if options.debug:
             logging.debug(map(lambda e : self.vs.reverse(e), clause))
