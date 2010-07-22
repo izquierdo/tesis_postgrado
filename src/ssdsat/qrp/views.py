@@ -18,8 +18,11 @@ class View:
     def existential_varset(self):
         return set([v for v in self.varset() if self.is_existential(v)])
 
+    def is_distinguished(self, a):
+        return a in self.head.arguments
+
     def is_existential(self, a):
-        return a not in self.head.arguments
+        return not self.is_distinguished(a)
 
 class Predicate:
     def __init__(self, name, arguments):

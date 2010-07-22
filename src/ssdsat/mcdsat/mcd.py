@@ -48,6 +48,7 @@ def mcd_theory(query, views):
 
     # extra clauses (not appearing in the McdSat paper)
     add_clauses_E1(query, views, t)
+    add_clauses_E2(query, views, t)
 
     return t
 
@@ -125,12 +126,26 @@ def add_clauses_C6(query, views, t):
 
     for (j, query_p) in enumerate(query.body, 1):
         for (i, v) in enumerate(views, 1):
-            #TODO use Predicate.unify here instead
             can_cover = False
 
             for p in v.body:
-                if p.name == query_p.name and p.arity == query_p.arity:
-                    can_cover = True
+                mapping = query_p.unify(p)
+
+                if mapping is None:
+                    continue
+
+                # for now, we know we can cover this goal (pending
+                # the distinguished/existential checks)
+                can_cover = True
+
+                for (x, y) in mapping:
+                    if query.is_distinguished(x) and v.is_existential(y):
+                        # we can't cover this query goal with this view goal
+                        can_cover = False
+                        break
+
+                if can_cover:
+                    # found a view goal with which we can cover the query goal
                     break
 
             if not can_cover:
@@ -320,3 +335,13 @@ def add_clauses_E1(query, views, t):
 
     for ((v_var, t_var), z_vars) in needed.iteritems():
         t.add_clause([v_var, t_var] + z_vars)
+
+def add_clauses_E2(query, views, t):
+    """
+    Description: Null view is useless
+    Formula: -v_0
+    """
+
+    logging.debug("adding clauses of type E2")
+
+    t.add_clause([-t.vs['v', 0]])
