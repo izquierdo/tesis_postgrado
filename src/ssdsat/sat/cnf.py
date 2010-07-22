@@ -40,6 +40,9 @@ class VariableSet:
 
         return [v for v in self._vars.iterkeys() if v[0] == t]
 
+    def rev(self, val):
+        return self._reverse[abs(val)]
+
     def reverse(self, val):
         if val < 0:
             return "-" + str(self._reverse[abs(val)])
@@ -48,6 +51,9 @@ class VariableSet:
 
     def get(self, *args):
         return self._vars.get(args)
+
+    def __str__(self):
+        return str(self._vars)
 
 class Theory:
     def __init__(self):
@@ -104,9 +110,31 @@ class Theory:
     def multicopy(self, n):
         """
         Produce a Theory consisting of n copies of this Theory
+
+        If variable [arg0, arg1, ..., argn-1] appears in this theory, then n
+        copies of it will appear in the resulting theory, with copy i as
+        [arg0, arg1, ..., argn-1, i]. Each clause in the theory will appear n
+        times in the returned theory, each with the appropriate variable
+        references.
         """
 
-        return self
+        t = Theory()
+
+        for i in xrange(n):
+            for var in self.vs:
+                newvar = var + (i,)
+                t.vs[newvar]
+
+        sign = lambda v : v/abs(v)
+        remap = lambda v, i : sign(v) * t.vs[self.vs.rev(v) + (i,)]
+
+        for i in xrange(n):
+            for (ctype, clauses) in self._clauses.iteritems():
+                for clause in clauses:
+                    newclause = map(lambda v : remap(v, i), clause)
+                    t.add_clause(newclause)
+
+        return t
 
 def import_theory(file):
     return cPickle.load(file)
