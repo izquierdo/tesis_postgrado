@@ -101,6 +101,13 @@ class Theory:
     def write_weighted_cnf(self, file):
         pass
 
+    def multicopy(self, n):
+        """
+        Produce a Theory consisting of n copies of this Theory
+        """
+
+        return self
+
 def import_theory(file):
     return cPickle.load(file)
 

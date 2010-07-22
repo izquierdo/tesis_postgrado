@@ -4,6 +4,7 @@ import os
 import logging
 
 import mcdsat.mcd
+import mcdsat.rw
 import options
 
 # Possible SSDSAT targets
@@ -20,6 +21,22 @@ def mcd(views, queries, ontology, costs, preferences):
 
     for m in models:
         print map(lambda v : t.vs.reverse(v), m)
+
+def rw(views, queries, ontology, costs, preferences):
+    # generate the MCD theory
+    t = mcdsat.mcd.mcd_theory(queries[0], views)
+
+    # generate the RW theory based on the MCD theory
+    rw_t = mcdsat.rw.rw_theory(queries[0], views, t)
+
+    # feed the theory to the d-DNNF compiler
+    nnf_filename = compile_ddnnf(rw_t)
+
+    # enumerate the models of the d-DNNF theory
+    models = enumerate_models(nnf_filename)
+
+    for m in models:
+        print map(lambda v : rw_t.vs.reverse(v), m)
 
 # Supporting methods
 
