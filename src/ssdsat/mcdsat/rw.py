@@ -53,3 +53,11 @@ def add_clauses_C17(query, views, t):
     """
 
     logging.debug("adding clauses of type C17")
+
+    m = len(query.body)
+
+    for (i, g) in enumerate(query.body, 1):
+        for ti in xrange(1, m):
+            lower = [t.vs.get('g', j, ti-1) for j in xrange(1, i)]
+            clause = [-t.vs['g', i, ti]] + lower
+            t.add_clause(clause)

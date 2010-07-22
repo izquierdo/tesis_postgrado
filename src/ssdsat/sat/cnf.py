@@ -69,7 +69,7 @@ class Theory:
         """
 
         for v in clause:
-            if abs(v) < 1 or abs(v) > len(self.vs):
+            if v is not None and (abs(v) < 1 or abs(v) > len(self.vs)):
                 raise LookupError
 
         if None in clause:
