@@ -19,7 +19,7 @@ class View:
         return set([v for v in self.varset() if self.is_existential(v)])
 
     def is_distinguished(self, a):
-        return a in self.head.arguments
+        return a in self.head.arguments or a.constant
 
     def is_existential(self, a):
         return not self.is_distinguished(a)
@@ -54,6 +54,9 @@ class Argument:
 
     def __eq__(self, other):
         return self.name == other.name and self.constant == other.constant
+
+    def __ne__(self, other):
+        return not self == other
 
     def __hash__(self):
         return hash((self.name,self.constant))

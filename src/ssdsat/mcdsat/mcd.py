@@ -367,7 +367,9 @@ def add_clauses_D1(query, views, t):
         (xb, B, nb) = (vb[1], vb[2], vb[3])
 
         if xa == xb and na == nb and A.constant and B.constant and A != B:
-            clause = [-va, -vb]
+            print va
+            print vb
+            clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 
 def add_clauses_D2(query, views, t):
@@ -384,13 +386,13 @@ def add_clauses_D2(query, views, t):
         (B, xb, nb) = (vb[1], vb[2], vb[3])
 
         if xa == xb and na == nb and A.constant and B.constant and A != B:
-            clause = [-va, -vb]
+            clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 
 def add_clauses_D3(query, views, t):
     """
     Description: Direct inconsistency 3
-    Formula: -t_{A,B} if A, B are constants
+    Formula: -t_{A,B} if A, B are constants and A != B
     """
     #TODO efficient implementation
 
@@ -400,8 +402,14 @@ def add_clauses_D3(query, views, t):
         (A, B) = (var[1], var[2])
 
         if A.constant and B.constant and A != B:
-            clause = [-var]
+            clause = [-t.vs[var]]
             t.add_clause(clause)
+
+def add_clauses_D4(query, views, t):
+    """
+    Description: Transitivity 1
+    Formula: t_{A,y} /\\ t_{x,y} /\\ t_{x,z} => t_{A,z} if A is a constant
+    """
 
     #print "clausulas S4  v_i /\\ t_{A,y} /\\ t_{x,y} /\\ t_{x,z} => t_{A,z}"
     #pprint.pprint(d4)
