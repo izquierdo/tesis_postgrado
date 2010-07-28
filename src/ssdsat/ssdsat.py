@@ -6,6 +6,7 @@ import logging
 import mcdsat.mcd
 import mcdsat.rw
 import options
+from qrp.views import View, Predicate
 
 # Possible SSDSAT targets
 
@@ -36,9 +37,43 @@ def rw(views, queries, ontology, costs, preferences):
     models = enumerate_models(nnf_filename)
 
     for m in models:
-        print map(lambda v : rw_t.vs.reverse(v), m)
+        print rw_rebuild(queries[0], views, rw_t, m)
 
-# Supporting methods
+# Target-specific supporting methods
+
+def rw_rebuild(query, views, theory, model):
+    model_views = {}
+    model_goals = {}
+    model_mappings = {}
+
+    for v in model:
+        var = theory.vs.rev(v)
+        copy = var[-1] # the last element marks the copy number
+        kind = var[0]
+
+        if kind == 'v':
+            model_views[copy] = var[1]
+        elif kind == 'g':
+            model_goals[copy] = var[1]
+        elif kind == 't':
+            model_mappings.setdefault(copy, []).append((var[1], var[2]))
+
+    goals = []
+
+    for n in xrange(len(query.body)):
+        args = []
+
+        for arg in views[model_views[n]-1].head.arguments:
+            for (x, y) in model_mappings[n]:
+                if arg == y:
+                    args.append(x)
+                    break
+
+        goals.append(Predicate(views[model_views[n]-1].head.name, args))
+
+    return View(query.head, goals)
+
+# External tools
 
 def compile_ddnnf(theory):
     """
