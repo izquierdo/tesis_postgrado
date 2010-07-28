@@ -50,6 +50,11 @@ def mcd_theory(query, views):
     add_clauses_E1(query, views, t)
     add_clauses_E2(query, views, t)
 
+    # clauses for constant handling
+    add_clauses_D1(query, views, t)
+    add_clauses_D2(query, views, t)
+    add_clauses_D3(query, views, t)
+
     return t
 
 def mcd_from_model(t):
@@ -345,3 +350,60 @@ def add_clauses_E2(query, views, t):
     logging.debug("adding clauses of type E2")
 
     t.add_clause([-t.vs['v', 0]])
+
+
+
+def add_clauses_D1(query, views, t):
+    """
+    Description: Direct inconsistency 1
+    Formula: t_{x,A} => -t_{x,B} if A, B are constants
+    """
+    #TODO efficient implementation
+
+    logging.debug("adding clauses of type D1")
+
+    for (va, vb) in combinations(t.vs.by_type('t'), r=2):
+        (xa, A, na) = (va[1], va[2], va[3])
+        (xb, B, nb) = (vb[1], vb[2], vb[3])
+
+        if xa == xb and na == nb and A.constant and B.constant and A != B:
+            clause = [-va, -vb]
+            t.add_clause(clause)
+
+def add_clauses_D2(query, views, t):
+    """
+    Description: Direct inconsistency 2
+    Formula: t_{A,x} => -t_{B,x} if A, B are constants
+    """
+    #TODO efficient implementation
+
+    logging.debug("adding clauses of type D2")
+
+    for (va, vb) in combinations(t.vs.by_type('t'), r=2):
+        (A, xa, na) = (va[1], va[2], va[3])
+        (B, xb, nb) = (vb[1], vb[2], vb[3])
+
+        if xa == xb and na == nb and A.constant and B.constant and A != B:
+            clause = [-va, -vb]
+            t.add_clause(clause)
+
+def add_clauses_D3(query, views, t):
+    """
+    Description: Direct inconsistency 3
+    Formula: -t_{A,B} if A, B are constants
+    """
+    #TODO efficient implementation
+
+    logging.debug("adding clauses of type D3")
+
+    for var in t.vs.by_type('t'):
+        (A, B) = (var[1], var[2])
+
+        if A.constant and B.constant and A != B:
+            clause = [-var]
+            t.add_clause(clause)
+
+    #print "clausulas S4  v_i /\\ t_{A,y} /\\ t_{x,y} /\\ t_{x,z} => t_{A,z}"
+    #pprint.pprint(d4)
+    #print "clausulas S5  v_i /\\ t_{y,A} /\\ t_{y,x} /\\ t_{z,x} => t_{z,A}"
+    #pprint.pprint(d5)

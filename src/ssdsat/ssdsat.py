@@ -42,6 +42,7 @@ def rw(views, queries, ontology, costs, preferences):
 # Target-specific supporting methods
 
 def rw_rebuild(query, views, theory, model):
+    #TODO complete implementation
     model_views = {}
     model_goals = {}
     model_mappings = {}
