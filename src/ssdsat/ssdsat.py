@@ -59,15 +59,23 @@ def rw_rebuild(query, views, theory, model):
             model_mappings.setdefault(copy, []).append((var[1], var[2]))
 
     goals = []
+    newvar = 0
 
     for n in xrange(len(query.body)):
         args = []
 
         for arg in views[model_views[n]-1].head.arguments:
+            appended = False
+
             for (x, y) in model_mappings[n]:
                 if arg == y:
                     args.append(x)
+                    appended = True
                     break
+
+            if not appended:
+                args.append("_" + str(newvar))
+                newvar += 1
 
         goals.append(Predicate(views[model_views[n]-1].head.name, args))
 
