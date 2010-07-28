@@ -48,10 +48,7 @@ def get_options(argv):
     return (target, views, queries, ontology, costs, preferences)
 
 def main(argv):
-    if options.debug:
-        logging.basicConfig(level=logging.DEBUG, format="%(message)s")
-    else:
-        logging.basicConfig(level=logging.INFO, format="%(message)s")
+    logging.basicConfig(level=options.loglevel, format="%(message)s")
 
     (target, views, queries, ontology, costs, preferences) = get_options(argv[1:])
 
