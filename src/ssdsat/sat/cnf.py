@@ -2,8 +2,6 @@ import collections
 import cPickle
 import logging
 
-import options
-
 class VariableSet:
     def __init__(self):
         self._vars = collections.defaultdict(self._id_generator().next)
@@ -70,7 +68,8 @@ class Theory:
         Add a clause to this theory, optionally specifying its weight.
 
         If an element of clause isn't in the variable set (vs), LookupError is
-        raised. If clause contains None, then the clause is silently discarded.
+        raised. If clause contains None or 0, then the clause is silently
+        discarded.
         """
 
         for v in clause:
