@@ -25,7 +25,7 @@ def mcd_theory(query, views):
     list of views.
     """
 
-    logging.debug("generating MCD theory")
+    logging.info("[Generate MCD theory]")
 
     t = Theory()
 
@@ -370,8 +370,6 @@ def add_clauses_D1(query, views, t):
         (xb, B, nb) = (vb[1], vb[2], vb[3])
 
         if xa == xb and na == nb and A.constant and B.constant and A != B:
-            print va
-            print vb
             clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 

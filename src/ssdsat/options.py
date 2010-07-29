@@ -11,5 +11,4 @@ models = sys.path[0] + "/models/models"
 max_models = 300
 
 # logging level
-debug = True #TODO remove
 loglevel = logging.DEBUG

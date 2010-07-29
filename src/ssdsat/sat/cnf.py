@@ -81,8 +81,7 @@ class Theory:
             # fail silently
             return
 
-        if options.debug:
-            logging.debug(map(lambda e : self.vs.reverse(e), clause))
+        logging.debug(map(lambda e : self.vs.reverse(e), clause))
 
         self._clauses[type].append(clause)
 

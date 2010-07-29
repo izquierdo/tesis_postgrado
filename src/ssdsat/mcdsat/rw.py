@@ -7,7 +7,7 @@ def rw_theory(query, views, t):
     existing MCD theory for the query and views.
     """
 
-    logging.debug("generating RW theory")
+    logging.info("[Generate RW theory]")
 
     rw_t = t.multicopy(len(query.body))
 

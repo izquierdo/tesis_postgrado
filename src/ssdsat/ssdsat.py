@@ -89,6 +89,8 @@ def compile_ddnnf(theory):
     Returns the filename of the d-DNNF #TODO better to return file-like object?
     """
 
+    logging.info("[Compile to DNNF]")
+
     with NamedTemporaryFile(prefix="ssdsat.", suffix=".cnf") as cnf_file:
         theory.write_unweighted_cnf(cnf_file)
         cnf_file.seek(0)
@@ -113,7 +115,7 @@ def enumerate_models(nnf_filename):
     of the variables made true in it.
     """
 
-    logging.info("enumerating models")
+    logging.info("[Enumerate models]")
 
     args = [options.models,
             "--write-models",
