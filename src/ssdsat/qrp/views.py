@@ -7,11 +7,27 @@ class View:
         body_str = ",".join(map(str, self.body))
         return "{head} :- {body}".format(head = self.head, body = body_str)
 
+    def argset(self):
+        s = set()
+
+        s.update([a for a in self.head.arguments])
+        s.update([a for g in self.body for a in g.arguments])
+
+        return s
+
     def varset(self):
         s = set()
 
         s.update([a for a in self.head.arguments if not a.constant])
         s.update([a for g in self.body for a in g.arguments if not a.constant])
+
+        return s
+
+    def constset(self):
+        s = set()
+
+        s.update([a for a in self.head.arguments if a.constant])
+        s.update([a for g in self.body for a in g.arguments if a.constant])
 
         return s
 

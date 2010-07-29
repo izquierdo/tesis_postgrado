@@ -43,17 +43,20 @@ def mcd_theory(query, views):
     add_clauses_C13(query, views, t)
     add_clauses_C14(query, views, t)
 
-    # C8 clauses are dependent on existing 't' variables
-    add_clauses_C8(query, views, t)
-
     # extra clauses (not appearing in the McdSat paper)
     add_clauses_E1(query, views, t)
     add_clauses_E2(query, views, t)
 
     # clauses for constant handling
+    add_clauses_D4(query, views, t) # may create new 't' variables
+    add_clauses_D5(query, views, t) # may create new 't' variables
+
     add_clauses_D1(query, views, t)
     add_clauses_D2(query, views, t)
     add_clauses_D3(query, views, t)
+
+    # C8 clauses are dependent on existing 't' variables
+    add_clauses_C8(query, views, t)
 
     return t
 
@@ -203,7 +206,7 @@ def add_clauses_C9(query, views, t):
 
     logging.debug("adding clauses of type C9")
 
-    for x in query.varset():
+    for x in query.argset():
         for (i, v) in enumerate(views, 1):
             for y, yp in combinations(v.varset(), r=2):
                 if v.is_existential(y) and v.is_existential(yp):
@@ -225,7 +228,7 @@ def add_clauses_C10(query, views, t):
             if not v.is_existential(y):
                 continue
 
-            for x in query.varset():
+            for x in query.argset():
                 if query.is_existential(x):
                     continue
 
@@ -293,11 +296,11 @@ def add_clauses_C13(query, views, t):
             if not query.is_existential(x):
                 continue
 
-            for xp in query.varset():
+            for xp in query.argset():
                 if x == xp:
                     continue
 
-                for y in v.varset():
+                for y in v.argset():
                     clause = [-t.vs['v', i], -t.vs['t', x, y, i],
                             -t.vs['t', xp, y, i]]
                     t.add_clause(clause)
@@ -411,7 +414,43 @@ def add_clauses_D4(query, views, t):
     Formula: t_{A,y} /\\ t_{x,y} /\\ t_{x,z} => t_{A,z} if A is a constant
     """
 
-    #print "clausulas S4  v_i /\\ t_{A,y} /\\ t_{x,y} /\\ t_{x,z} => t_{A,z}"
-    #pprint.pprint(d4)
-    #print "clausulas S5  v_i /\\ t_{y,A} /\\ t_{y,x} /\\ t_{z,x} => t_{z,A}"
-    #pprint.pprint(d5)
+    logging.debug("adding clauses of type D4")
+
+    for (i, v) in enumerate(views, 1):
+        for A in query.constset():
+            for x in query.varset():
+                for y in v.argset():
+                    for z in v.argset():
+                        if y == z:
+                            continue
+
+                        clause = [
+                                -t.vs['t', A, y, i],
+                                -t.vs['t', x, y, i],
+                                -t.vs['t', x, z, i],
+                                t.vs['t', A, z, i]]
+                        t.add_clause(clause)
+
+def add_clauses_D5(query, views, t):
+    """
+    Description: Transitivity 2
+    Formula: t_{y,A} /\\ t_{y,x} /\\ t_{z,x} => t_{z,A} if A is a constant
+    """
+
+    logging.debug("adding clauses of type D5")
+
+    for (i, v) in enumerate(views, 1):
+        for A in v.constset():
+            for x in v.varset():
+                for y in query.argset():
+                    for z in query.argset():
+                        if y == z:
+                            continue
+
+                        clause = [
+                                -t.vs.get('t', y, A, i),
+                                -t.vs.get('t', y, x, i),
+                                -t.vs.get('t', z, x, i),
+                                t.vs.get('t', z, A, i)]
+
+                        t.add_clause(clause)

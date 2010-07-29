@@ -50,7 +50,12 @@ class VariableSet:
         return str(self._reverse[val])
 
     def get(self, *args):
-        return self._vars.get(args)
+        val = self._vars.get(args)
+
+        if val is None:
+            return 0
+
+        return val
 
     def __str__(self):
         return str(self._vars)
@@ -69,10 +74,10 @@ class Theory:
         """
 
         for v in clause:
-            if v is not None and (abs(v) < 1 or abs(v) > len(self.vs)):
+            if v is not None and (abs(v) < 0 or abs(v) > len(self.vs)):
                 raise LookupError
 
-        if None in clause:
+        if (None in clause) or (0 in clause):
             # fail silently
             return
 
