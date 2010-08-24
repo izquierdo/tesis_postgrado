@@ -30,7 +30,7 @@
     <h1 class="title">STEREO</h1>
 </p>
 
-<form action="run" method="GET">
+<form action="run.php" method="GET">
 
 <h2>Services</h2>
 

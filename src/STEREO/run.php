@@ -6,5 +6,10 @@ $q = $_GET["query"];
 $o = $_GET["ontology"];
 $p = $_GET["preference"];
 
-echo "Consultando $q sobre ont $o y pref $p";
+if ($_GET["run"] == "All rewritings")
+    $all = true;
+else
+    $all = false;
+
+echo "Consultando $q sobre ont $o y pref $p. Todas? $all";
 ?>
