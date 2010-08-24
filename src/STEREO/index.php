@@ -35,9 +35,7 @@
 <h2>Services</h2>
 
 <div style="border-style: solid; border-width: 1px; padding: 5px;">
-national(X1,X2) :- flight(X1,X2),uscity(X1),uscity(X2)<br/>
-oneway(X3,X4) :- flight(X3,X4)<br/>
-onestop(X1,X3) :- flight(X1,X2),flight(X2,X3)<br/>
+<?= nl2br($services_text) ?>
 </div>
 
 <h2>Query</h2>
@@ -47,6 +45,11 @@ onestop(X1,X3) :- flight(X1,X2),flight(X2,X3)<br/>
 </select>
 
 <!---------------------------------------------------------------------------->
+
+<?php
+/*
+?>
+
 
 <h2>Ontology</h2>
 
@@ -93,6 +96,10 @@ foreach ($preferences as $e) {
 
 <div id="preference_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
 </div>
+
+<?php
+*/
+?>
 
 <!---------------------------------------------------------------------------->
 
