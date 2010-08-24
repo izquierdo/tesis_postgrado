@@ -1,0 +1,22 @@
+body
+{
+    background-color: #EEE8AA;
+}
+
+h1.title
+{
+    text-align: center;
+    font-family: helvetica, arial, sans-serif;
+}
+
+img.logo
+{
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+.centrado
+{
+    text-align: center;
+}
