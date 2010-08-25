@@ -9,21 +9,21 @@ $file_prefix = "/home/idaniel/ssdsat/demo_ex/";
 $services_file = $file_prefix . "services.txt";
 
 $queries_files = array(
-    $file_prefix + "queries1.txt",
-    $file_prefix + "queries2.txt",
-    $file_prefix + "queries3.txt",
+    $file_prefix . "query1.txt",
+    $file_prefix . "query2.txt",
+    $file_prefix . "query3.txt",
 );
 
 $ontologies_files = array(
-    $file_prefix + "ontology1.txt",
-    $file_prefix + "ontology2.txt",
-    $file_prefix + "ontology3.txt",
+    $file_prefix . "ontology1.txt",
+    $file_prefix . "ontology2.txt",
+    $file_prefix . "ontology3.txt",
 );
 
 $preferences_files = array(
-    $file_prefix + "preferences1.txt",
-    $file_prefix + "preferences2.txt",
-    $file_prefix + "preferences3.txt",
+    $file_prefix . "preferences1.txt",
+    $file_prefix . "preferences2.txt",
+    $file_prefix . "preferences3.txt",
 );
 
 ################################################################################
@@ -32,26 +32,24 @@ $preferences_files = array(
 
 $services_text = file_get_contents($services_file);
 
-/*
 $queries_text = array();
 $ontologies_text = array();
 $preferences_text = array();
 
 foreach ($queries_files as $f)
 {
-    array_push($queries_text, $file_get_contents($f));
+    array_push($queries_text, file_get_contents($f));
 }
 
 foreach ($ontologies_files as $f)
 {
-    array_push($ontologies_text, $file_get_contents($f));
+    array_push($ontologies_text, file_get_contents($f));
 }
 
 foreach ($preferences_files as $f)
 {
-    array_push($preferences_text, $file_get_contents($f));
+    array_push($preferences_text, file_get_contents($f));
 }
- */
 
 ################################################################################
 # Data
