@@ -67,5 +67,5 @@ $preferences = array(
     array("name" => "2", "text" => "preferencia2"),
     array("name" => "3", "text" => "preferencia3"),
     );
-?>
 
+?>
