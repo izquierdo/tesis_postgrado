@@ -5,20 +5,21 @@ import logging
 
 import mcdsat.mcd
 import mcdsat.rw
+import preferences
 import options
 from qrp.views import View, Predicate
 
 # Possible SSDSAT targets
 
-def mcd(views, queries, ontology, costs, preferences):
+def mcd(views, queries, ontology, costs, preflist):
     # generate the MCD theory
     t = mcdsat.mcd.mcd_theory(queries[0], views)
 
     # add preferences to the theory
-    preferences
+    pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
 
     # feed the theory to the d-DNNF compiler
-    nnf_filename = compile_ddnnf(t)
+    nnf_filename = compile_ddnnf(pref_t)
 
     # enumerate the models of the d-DNNF theory
     models = enumerate_models(nnf_filename)
@@ -26,12 +27,15 @@ def mcd(views, queries, ontology, costs, preferences):
     for m in models:
         print map(lambda v : t.vs.reverse(v), m)
 
-def rw(views, queries, ontology, costs, preferences):
+def rw(views, queries, ontology, costs, preflist):
     # generate the MCD theory
     t = mcdsat.mcd.mcd_theory(queries[0], views)
 
+    # add preferences to the theory
+    pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
+
     # generate the RW theory based on the MCD theory
-    rw_t = mcdsat.rw.rw_theory(queries[0], views, t)
+    rw_t = mcdsat.rw.rw_theory(queries[0], views, pref_t)
 
     # feed the theory to the d-DNNF compiler
     nnf_filename = compile_ddnnf(rw_t)

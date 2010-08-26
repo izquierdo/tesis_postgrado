@@ -19,6 +19,13 @@ class Literal:
 
         return "-" + self.name
 
+class UnknownNameError:
+    def __init__(self, name = None):
+        self.name = name
+
+    def __repr__(self):
+        return "Unknown name '{0}'".format(self.name)
+
 ################################################################################
 # Preference parsing
 ################################################################################
@@ -97,6 +104,33 @@ parser = yacc.yacc(debug=0)
 
 def parse(file):
     return parser.parse(file.read(), lexer=lexer)
+
+################################################################################
+# Preference parsing
+################################################################################
+
+def preference_clauses(query, views, preflist, t):
+    view_names = set([v.head.name for v in views])
+    pred_names = set()
+
+    for v in views:
+        for g in v.body:
+            pred_names.add(g.name)
+
+    for p in preflist:
+        clause = []
+
+        for e in p.formula:
+            if e.name in view_names:
+                pass
+            elif e.name in pred_names:
+                pass
+            else:
+                raise UnknownNameError(e.name)
+
+        #t.add_clause([-t.vs['v', i], -t.vs['v', j]])
+
+    return t
 
 if __name__ == "__main__":
     import sys
