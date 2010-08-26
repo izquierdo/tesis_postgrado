@@ -1,10 +1,19 @@
 <?php include 'data.php'; ?>
 
+<html>
+<head>
+    <title>
+        STEREO results
+    </title>
+
+    <link rel="stylesheet" href="http://www.izquierdo.com.ve/stereo_media/css/style.css" type="text/css">
+</head>
+
 <?php
 
-function RunSsdsat($queryfile)
+function RunSsdsat($queryfile, $viewfile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/ssdsat/demo -t RW -q $queryfile -v <TODO views>";
+    $program = "/usr/local/bin/python /home/idaniel/ssdsat/driver.py -t RW -q $queryfile -v $viewfile";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
@@ -23,6 +32,7 @@ function RunSsdsat($queryfile)
         #fwrite($pipes[0], $locationdatalist);
         fclose($pipes[0]);
 
+        $error = stream_get_contents($pipes[2]);
         $result = stream_get_contents($pipes[1]);
         fclose($pipes[1]);
         fclose($pipes[2]);
@@ -30,7 +40,7 @@ function RunSsdsat($queryfile)
         $return_value = proc_close($process);
     }
 
-    return $result;
+    return $error;
 }
 ?>
 
@@ -44,9 +54,38 @@ if ($_GET["run"] == "All rewritings")
     $all = true;
 else
     $all = false;
+?>
 
-echo "Consultando $q sobre ont $o y pref $p. Todas? $all";
+<?php
+/********************************************************************************* 
+    BEGIN TIMING
+ *********************************************************************************/
 
-echo "Running da " . RunSsdsat();
+      $mtime = microtime();
+      $mtime = explode(' ', $mtime);
+      $mtime = $mtime[1] + $mtime[0];
+      $starttime = $mtime;
+?>
 
+<?php
+/********************************************************************************* 
+    SSDSAT
+ *********************************************************************************/
+
+      $result = RunSsdsat($queries_files[intval($q)], $services_file);
+?>
+
+<?php
+/********************************************************************************* 
+    END TIMING
+ *********************************************************************************/
+      $mtime = microtime();
+      $mtime = explode(" ", $mtime);
+      $mtime = $mtime[1] + $mtime[0];
+      $endtime = $mtime;
+      $totaltime = ($endtime - $starttime);
+      $rounded = round($totaltime, 3);
+
+      echo nl2br($result);
+      echo "Results obtained in $rounded seconds.";
 ?>

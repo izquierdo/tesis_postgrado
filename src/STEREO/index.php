@@ -41,7 +41,18 @@
 <h2>Query</h2>
 
 <select name="query">
-  <option value="q1">q(X1,X2) :- flight(X1,X2),flight(X2,X1),uscity(X1)</option>
+<?php
+$i = 0;
+
+foreach ($queries_text as $q) {
+?>
+
+    <option value="<?= $i ?>"><?= $q ?></option>
+
+<?php
+    $i = $i + 1;
+}
+?>
 </select>
 
 <!---------------------------------------------------------------------------->
