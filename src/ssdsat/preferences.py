@@ -119,10 +119,26 @@ def preference_clauses(query, views, preflist, t):
     return t
 
 def add_clauses_O1(query, views, preflist, view_names, pred_names, t):
-    pass
+    for (i, v) in enumerate(views, 1):
+        seen = set()
+
+        for g in v.body:
+            if g.name in seen:
+                continue
+
+            seen.add(g.name)
+            clause = [-t.vs['v', i], t.vs['p', g.name]]
+            t.add_clause(clause)
 
 def add_clauses_O2(query, views, preflist, view_names, pred_names, t):
-    pass
+    for p in pred_names:
+        clause = [-t.vs['p', p]]
+
+        for (i, v) in enumerate(views, 1):
+            if p in [g.name for g in v.body]:
+                clause.append(t.vs['v', i])
+
+        t.add_clause(clause)
 
 def add_clauses_O3(query, views, preflist, view_names, pred_names, t):
     for p in preflist:
