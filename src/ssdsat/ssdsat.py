@@ -14,6 +14,9 @@ def mcd(views, queries, ontology, costs, preferences):
     # generate the MCD theory
     t = mcdsat.mcd.mcd_theory(queries[0], views)
 
+    # add preferences to the theory
+    preferences
+
     # feed the theory to the d-DNNF compiler
     nnf_filename = compile_ddnnf(t)
 

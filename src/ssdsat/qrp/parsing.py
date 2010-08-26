@@ -13,6 +13,7 @@ tokens = (
     "COMMA",
 )
 
+#TODO integers shouldn't be used for predicate names
 t_CONSTANT = r"\d+|[a-z]\w*"
 t_VARIABLE = r"[A-Z]\w*"
 t_SUB = r":-"
@@ -25,7 +26,7 @@ t_ignore = ' \t\n'
 def t_error(t):
     raise TypeError("Unknown text '%s'" % (t.value,))
 
-lex.lex()
+lexer = lex.lex()
 
 # Parser
 
@@ -92,9 +93,9 @@ def p_argument_constant(p):
 def p_error(p):
         raise TypeError("unknown text at %r" % (p.value,))
 
-yacc.yacc(debug=0)
+parser = yacc.yacc(debug=0)
 
 # Helpers
 
 def parse(file):
-    return yacc.parse(file.read())
+    return parser.parse(file.read(), lexer=lexer)
