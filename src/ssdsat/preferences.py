@@ -110,27 +110,48 @@ def parse(file):
 ################################################################################
 
 def preference_clauses(query, views, preflist, t):
-    view_names = set([v.head.name for v in views])
+    (view_names, pred_names) = preference_names(views)
+
+    add_clauses_O1(query, views, preflist, view_names, pred_names, t)
+    add_clauses_O2(query, views, preflist, view_names, pred_names, t)
+    add_clauses_O3(query, views, preflist, view_names, pred_names, t)
+
+    return t
+
+def add_clauses_O1(query, views, preflist, view_names, pred_names, t):
+    pass
+
+def add_clauses_O2(query, views, preflist, view_names, pred_names, t):
+    pass
+
+def add_clauses_O3(query, views, preflist, view_names, pred_names, t):
+    for p in preflist:
+        clause = []
+
+        for e in p.formula:
+            sign = 1 if e.positive else -1
+
+            if e.name in view_names:
+                clause.append(sign * t.vs['v', view_names[e.name]])
+            elif e.name in pred_names:
+                clause.append(sign * t.vs['p', e.name])
+            else:
+                raise UnknownNameError(e.name)
+
+        t.add_clause(clause, weight = p.cost)
+
+def preference_names(views):
+    view_names = {}
     pred_names = set()
+
+    for (i, v) in enumerate(views, 1):
+        view_names[v.head.name] = i
 
     for v in views:
         for g in v.body:
             pred_names.add(g.name)
 
-    for p in preflist:
-        clause = []
-
-        for e in p.formula:
-            if e.name in view_names:
-                pass
-            elif e.name in pred_names:
-                pass
-            else:
-                raise UnknownNameError(e.name)
-
-        #t.add_clause([-t.vs['v', i], -t.vs['v', j]])
-
-    return t
+    return (view_names, pred_names)
 
 if __name__ == "__main__":
     import sys
