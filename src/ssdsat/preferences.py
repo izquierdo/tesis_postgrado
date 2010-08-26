@@ -5,19 +5,19 @@ class Preference:
         self.cost = cost
         self.formula = formula
 
-class BinOp:
-    def __init__(self, p, q):
-        self.p = p
-        self.q = q
+    def __repr__(self):
+        return "Preference({0}, {1})".format(self.cost, self.formula)
 
-class OrPref(BinOp):
-    pass
+class Literal:
+    def __init__(self, positive, name):
+        self.positive = positive
+        self.name = name
 
-class AndPref(BinOp):
-    pass
+    def __repr__(self):
+        if self.positive:
+            return self.name
 
-class ImplyPref(BinOp):
-    pass
+        return "-" + self.name
 
 ################################################################################
 # Preference parsing
@@ -26,22 +26,18 @@ class ImplyPref(BinOp):
 # Lexer
 
 tokens = (
-    "INTEGER",
     "NAME",
-    "LOR",
-    "LAND",
-    "IMPLY",
     "NEG",
+    "NEWLINE",
+    "INTEGER",
 )
 
 t_INTEGER = r"\d+"
 t_NAME = r"[a-z]\w*"
-t_LOR = r"\\/"
-t_LAND = r"/\\"
-t_IMPLY = "=>"
 t_NEG = "-"
+t_NEWLINE = r"\n"
 
-t_ignore = ' \t\n'
+t_ignore = ' \t'
 
 def t_error(t):
     raise TypeError("Unknown text '%s'" % (t.value,))
@@ -56,47 +52,41 @@ def p_preference_list(p):
     """
     p[0] = p[1] + [p[2]]
 
-def p_single_preference_list(p):
+def p_empty_preference_list(p):
     """
-    preference_list : preference
+    preference_list :
     """
-    p[0] = [p[1]]
+    p[0] = []
 
 def p_preference(p):
     """
-    preference : INTEGER formula
+    preference : INTEGER literal_list NEWLINE
     """
-    p[0] = Preference(p[1], p[2])
+    p[0] = Preference(int(p[1]), p[2])
 
-def p_formula_lor(p):
+def p_literal_list(p):
     """
-    formula : literal LOR literal
+    literal_list : literal_list literal 
     """
-    p[0] = OrPref(p[1], p[3])
+    p[0] = p[1] + [p[2]]
 
-def p_formula_land(p):
+def p_single_literal_list(p):
     """
-    formula : literal LAND literal
+    literal_list : literal
     """
-    p[0] = AndPref(p[1], p[3])
+    p[0] = [p[1]]
 
-def p_formula_imply(p):
-    """
-    formula : literal IMPLY literal
-    """
-    p[0] = ImplyPref(p[1], p[3])
-
-def p_literal_positive(p):
+def p_positive_literal(p):
     """
     literal : NAME
     """
-    p[0] = (1, p[1])
+    p[0] = Literal(True, p[1])
 
-def p_literal_negative(p):
+def p_negative_literal(p):
     """
     literal : NEG NAME
     """
-    p[0] = (-1, p[1])
+    p[0] = Literal(False, p[2])
 
 def p_error(p):
         raise TypeError("unknown text at %r" % (p.value,))
@@ -110,4 +100,4 @@ def parse(file):
 
 if __name__ == "__main__":
     import sys
-    print yacc.parse(sys.stdin.read())
+    print parse(sys.stdin)
