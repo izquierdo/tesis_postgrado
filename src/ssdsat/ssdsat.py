@@ -154,20 +154,17 @@ def enumerate_models(nnf_filename):
     cleanup = lambda m : map(int, m.strip().strip("{}").split())
     return map(cleanup, models[begin:end])
 
-def enumerate_best_model(nnf_filename):
+def enumerate_best_model(nnf_filename, cost_filename):
     """
     Find a best model of the d-DNNF theory specified at the given file and
     return it in a list if it exists. The model is encoded as a list of the
     integer IDs of the variables made true in it.
     """
 
-    logging.info("[Enumerate models]")
+    logging.info("[Best model]")
 
-    #TODO copypasteado a partir de aqui
-
-    args = [options.models,
-            "--write-models",
-            "--num", str(options.max_models),
+    args = [options.bestmodel,
+            "-c", cost_filename,
             nnf_filename]
 
     models_process = Popen(args, stdout = PIPE)
@@ -175,15 +172,11 @@ def enumerate_best_model(nnf_filename):
 
     models = models_process.stdout.readlines()
 
-    #filter unneeded output
-    for (i, e) in enumerate(models):
-        if e.strip() == "--- models begin ---":
-            begin = i + 1
-            break
+    #the output line is the 3rd one
+    output = models[2].strip()
+    pair = output.split("{")
 
-    for (i, e) in enumerate(reversed(models)):
-        if e.strip() == "---- models end ----":
-            end = len(models) - i - 1
+    cost = int(pair[0])
+    bestmodel = map(int, pair[1].strip(" }").strip().split())
 
-    cleanup = lambda m : map(int, m.strip().strip("{}").split())
-    return map(cleanup, models[begin:end])
+    return (cost, bestmodel)
