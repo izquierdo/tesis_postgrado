@@ -68,6 +68,7 @@ def main(argv):
     targets = {}
     targets["MCD"] = ssdsat.mcd
     targets["RW"] = ssdsat.rw
+    targets["BESTRW"] = ssdsat.bestrw
 
     try:
         f = targets[target]

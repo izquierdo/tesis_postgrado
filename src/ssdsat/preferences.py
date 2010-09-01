@@ -1,4 +1,5 @@
 import logging
+from tempfile import NamedTemporaryFile
 
 from ply import lex, yacc
 
@@ -41,7 +42,7 @@ tokens = (
     "INTEGER",
 )
 
-t_INTEGER = r"\d+"
+t_INTEGER = r"-?\d+"
 t_NAME = r"[a-z]\w*"
 t_NEG = "-"
 t_NEWLINE = r"\n"
@@ -110,6 +111,18 @@ def parse(file):
 ################################################################################
 # Preference parsing
 ################################################################################
+
+def preference_cost_file(preflist, t, copies):
+    with NamedTemporaryFile(prefix="ssdsat.", suffix=".costs", delete = False) as cost_file:
+        cost_filename = cost_file.name
+
+        print >> cost_file, len(preflist)*copies
+
+        for (i, p) in enumerate(preflist):
+            for c in xrange(copies):
+                print >> cost_file, "{0} {1}".format(t.vs['pref', i, c], p.cost)
+
+    return cost_filename
 
 def preference_clauses(query, views, preflist, t):
     (view_names, pred_names) = preference_names(views)
