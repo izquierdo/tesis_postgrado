@@ -1,3 +1,5 @@
+import logging
+
 from ply import lex, yacc
 
 class Preference:
@@ -115,10 +117,17 @@ def preference_clauses(query, views, preflist, t):
     add_clauses_O1(query, views, preflist, view_names, pred_names, t)
     add_clauses_O2(query, views, preflist, view_names, pred_names, t)
     add_clauses_O3(query, views, preflist, view_names, pred_names, t)
+    add_clauses_O4(query, views, preflist, view_names, pred_names, t)
 
     return t
 
 def add_clauses_O1(query, views, preflist, view_names, pred_names, t):
+    """
+    Using a view implies all of the predicates appearing in it are in use.
+    """
+
+    logging.debug("adding clauses of type O1")
+
     for (i, v) in enumerate(views, 1):
         seen = set()
 
@@ -127,12 +136,18 @@ def add_clauses_O1(query, views, preflist, view_names, pred_names, t):
                 continue
 
             seen.add(g.name)
-            clause = [-t.vs['v', i], t.vs['p', g.name]]
+            clause = [-t.vs['v', i], t.vs['o', g.name]]
             t.add_clause(clause)
 
 def add_clauses_O2(query, views, preflist, view_names, pred_names, t):
+    """
+    Using a predicate implies at least one of the views in which it appears is in use.
+    """
+
+    logging.debug("adding clauses of type O2")
+
     for p in pred_names:
-        clause = [-t.vs['p', p]]
+        clause = [-t.vs['o', p]]
 
         for (i, v) in enumerate(views, 1):
             if p in [g.name for g in v.body]:
@@ -141,8 +156,14 @@ def add_clauses_O2(query, views, preflist, view_names, pred_names, t):
         t.add_clause(clause)
 
 def add_clauses_O3(query, views, preflist, view_names, pred_names, t):
-    for p in preflist:
-        clause = []
+    """
+    The 'pref' variable for each preference implies the preference is enforced.
+    """
+
+    logging.debug("adding clauses of type O3")
+
+    for (i, p) in enumerate(preflist):
+        clause = [-t.vs['pref', i]]
 
         for e in p.formula:
             sign = 1 if e.positive else -1
@@ -150,11 +171,33 @@ def add_clauses_O3(query, views, preflist, view_names, pred_names, t):
             if e.name in view_names:
                 clause.append(sign * t.vs['v', view_names[e.name]])
             elif e.name in pred_names:
-                clause.append(sign * t.vs['p', e.name])
+                clause.append(sign * t.vs['o', e.name])
             else:
                 raise UnknownNameError(e.name)
 
         t.add_clause(clause, weight = p.cost)
+
+def add_clauses_O4(query, views, preflist, view_names, pred_names, t):
+    """
+    A preference being enforced implies its 'pref' variable.
+    """
+
+    logging.debug("adding clauses of type O4")
+
+    for (i, p) in enumerate(preflist):
+        for e in p.formula:
+            clause = [t.vs['pref', i]]
+
+            sign = 1 if e.positive else -1
+
+            if e.name in view_names:
+                clause.append(-sign * t.vs['v', view_names[e.name]])
+            elif e.name in pred_names:
+                clause.append(-sign * t.vs['o', e.name])
+            else:
+                raise UnknownNameError(e.name)
+
+            t.add_clause(clause, weight = p.cost)
 
 def preference_names(views):
     view_names = {}

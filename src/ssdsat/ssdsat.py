@@ -16,7 +16,10 @@ def mcd(views, queries, ontology, costs, preflist):
     t = mcdsat.mcd.mcd_theory(queries[0], views)
 
     # add preferences to the theory
-    pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
+    if preflist:
+        pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
+    else:
+        pref_t = t
 
     # feed the theory to the d-DNNF compiler
     nnf_filename = compile_ddnnf(pref_t)
@@ -32,7 +35,10 @@ def rw(views, queries, ontology, costs, preflist):
     t = mcdsat.mcd.mcd_theory(queries[0], views)
 
     # add preferences to the theory
-    pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
+    if preflist:
+        pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
+    else:
+        pref_t = t
 
     # generate the RW theory based on the MCD theory
     rw_t = mcdsat.rw.rw_theory(queries[0], views, pref_t)
@@ -95,6 +101,7 @@ def compile_ddnnf(theory):
     """
     Returns the filename of the d-DNNF #TODO better to return file-like object?
     """
+    #TODO better to return file-like object?
 
     logging.info("[Compile to DNNF]")
 
@@ -123,6 +130,40 @@ def enumerate_models(nnf_filename):
     """
 
     logging.info("[Enumerate models]")
+
+    args = [options.models,
+            "--write-models",
+            "--num", str(options.max_models),
+            nnf_filename]
+
+    models_process = Popen(args, stdout = PIPE)
+    models_process.wait()
+
+    models = models_process.stdout.readlines()
+
+    #filter unneeded output
+    for (i, e) in enumerate(models):
+        if e.strip() == "--- models begin ---":
+            begin = i + 1
+            break
+
+    for (i, e) in enumerate(reversed(models)):
+        if e.strip() == "---- models end ----":
+            end = len(models) - i - 1
+
+    cleanup = lambda m : map(int, m.strip().strip("{}").split())
+    return map(cleanup, models[begin:end])
+
+def enumerate_best_model(nnf_filename):
+    """
+    Find a best model of the d-DNNF theory specified at the given file and
+    return it in a list if it exists. The model is encoded as a list of the
+    integer IDs of the variables made true in it.
+    """
+
+    logging.info("[Enumerate models]")
+
+    #TODO copypasteado a partir de aqui
 
     args = [options.models,
             "--write-models",
