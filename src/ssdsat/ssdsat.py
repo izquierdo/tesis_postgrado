@@ -56,26 +56,25 @@ def bestrw(views, queries, ontology, costs, preflist):
     # generate the MCD theory
     t = mcdsat.mcd.mcd_theory(queries[0], views)
 
-    # add preferences to the theory
-    if preflist:
-        pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
-    else:
-        pref_t = t
+    # add MCD preferences to the theory
+    pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
 
     # generate the RW theory based on the MCD theory
     rw_t = mcdsat.rw.rw_theory(queries[0], views, pref_t)
 
+    # add RW preferences to the theory
+    pref_rw_t = preferences.preference_rw_clauses(queries[0], views, preflist, rw_t)
+
     # feed the theory to the d-DNNF compiler
-    nnf_filename = compile_ddnnf(rw_t)
+    nnf_filename = compile_ddnnf(pref_rw_t)
 
     # generate the the cost file
-    if preflist:
-        cost_file = preferences.preference_cost_file(preflist, rw_t, len(views))
+    cost_file = preferences.preference_cost_file(preflist, pref_rw_t, len(views))
 
     # find the best model of the d-DNNF theory and its cost
     (cost, model) = enumerate_best_model(nnf_filename, cost_file)
 
-    print cost, rw_rebuild(queries[0], views, rw_t, model)
+    print cost, rw_rebuild(queries[0], views, pref_rw_t, model)
 
 # Target-specific supporting methods
 

@@ -1,4 +1,5 @@
 import logging
+from itertools import product
 from tempfile import NamedTemporaryFile
 
 from ply import lex, yacc
@@ -113,22 +114,36 @@ def parse(file):
 ################################################################################
 
 def preference_cost_file(preflist, t, copies):
+    if not preflist:
+        return t
+
     with NamedTemporaryFile(prefix="ssdsat.", suffix=".costs", delete = False) as cost_file:
         cost_filename = cost_file.name
 
         print >> cost_file, len(preflist)*copies
 
         for (i, p) in enumerate(preflist):
-            for c in xrange(copies):
-                print >> cost_file, "{0} {1}".format(t.vs['pref', i, c], p.cost)
+            print >> cost_file, "{0} {1}".format(t.vs['pref', i], p.cost)
 
     return cost_filename
 
 def preference_clauses(query, views, preflist, t):
+    if not preflist:
+        return t
+
     (view_names, pred_names) = preference_names(views)
 
     add_clauses_O1(query, views, preflist, view_names, pred_names, t)
     add_clauses_O2(query, views, preflist, view_names, pred_names, t)
+
+    return t
+
+def preference_rw_clauses(query, views, preflist, t):
+    if not preflist:
+        return t
+
+    (view_names, pred_names) = preference_names(views)
+
     add_clauses_O3(query, views, preflist, view_names, pred_names, t)
     add_clauses_O4(query, views, preflist, view_names, pred_names, t)
 
@@ -176,19 +191,28 @@ def add_clauses_O3(query, views, preflist, view_names, pred_names, t):
     logging.debug("adding clauses of type O3")
 
     for (i, p) in enumerate(preflist):
-        clause = [-t.vs['pref', i]]
+        positives = [-t.vs['pref', i]]
+        negatives = []
 
         for e in p.formula:
-            sign = 1 if e.positive else -1
-
             if e.name in view_names:
-                clause.append(sign * t.vs['v', view_names[e.name]])
+                vartype = 'v'
+                varname = view_names[e.name]
             elif e.name in pred_names:
-                clause.append(sign * t.vs['o', e.name])
+                vartype = 'o'
+                varname = e.name
             else:
                 raise UnknownNameError(e.name)
 
-        t.add_clause(clause, weight = p.cost)
+            if e.positive:
+                for c in xrange(len(views)):
+                    positives.append(t.vs[vartype, varname, c])
+            else:
+                nn = [-t.vs[vartype, varname, c] for c in xrange(len(views))]
+                negatives.append(nn)
+
+        for negs in product(*negatives):
+            t.add_clause(positives + list(negs))
 
 def add_clauses_O4(query, views, preflist, view_names, pred_names, t):
     """
@@ -204,9 +228,11 @@ def add_clauses_O4(query, views, preflist, view_names, pred_names, t):
             sign = 1 if e.positive else -1
 
             if e.name in view_names:
-                clause.append(-sign * t.vs['v', view_names[e.name]])
+                for c in xrange(len(views)):
+                    clause.append(-sign * t.vs['v', view_names[e.name], c])
             elif e.name in pred_names:
-                clause.append(-sign * t.vs['o', e.name])
+                for c in xrange(len(views)):
+                    clause.append(-sign * t.vs['o', e.name, c])
             else:
                 raise UnknownNameError(e.name)
 
