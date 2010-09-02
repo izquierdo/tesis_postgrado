@@ -15,7 +15,7 @@
     }
 
     function displayPreference(text) {
-        $("#preference_display").text(text).show();
+        $("#preference_display").html(text).show();
     }
     </script>
 </head>
@@ -85,21 +85,27 @@ foreach ($ontologies as $ontology) {
 </div>
 
 <!---------------------------------------------------------------------------->
+<?php
+*/
+?>
+
 
 <h2>Preferences</h2>
 
 <div id="preference_select" style="padding: 5px;">
 
 <?php
-foreach ($preferences as $e) {
+$i = 0;
+
+foreach ($preferences_text as $e) {
 ?>
 
-<?= $e["name"] ?>
-
-<input type="radio" name="preference" value="<?= $e["name"] ?>" onclick="displayPreference('<?= $e["text"] ?>')" />
+<?= $i ?>
+<input type="radio" name="preference" value="<?= $i ?>" onclick="displayPreference('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
 <br/>
 
 <?php
+    $i = $i + 1;
 }
 ?>
 
@@ -107,10 +113,6 @@ foreach ($preferences as $e) {
 
 <div id="preference_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
 </div>
-
-<?php
-*/
-?>
 
 <!---------------------------------------------------------------------------->
 
