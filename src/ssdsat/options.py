@@ -12,4 +12,4 @@ bestmodel = sys.path[0] + "/models/bestmodel"
 max_models = 300
 
 # logging level
-loglevel = logging.DEBUG
+loglevel = logging.INFO

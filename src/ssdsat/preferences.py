@@ -223,20 +223,21 @@ def add_clauses_O4(query, views, preflist, view_names, pred_names, t):
 
     for (i, p) in enumerate(preflist):
         for e in p.formula:
-            clause = [t.vs['pref', i]]
-
-            sign = 1 if e.positive else -1
-
             if e.name in view_names:
-                for c in xrange(len(views)):
-                    clause.append(-sign * t.vs['v', view_names[e.name], c])
+                vartype = 'v'
+                varname = view_names[e.name]
             elif e.name in pred_names:
-                for c in xrange(len(views)):
-                    clause.append(-sign * t.vs['o', e.name, c])
+                vartype = 'o'
+                varname = e.name
             else:
                 raise UnknownNameError(e.name)
 
-            t.add_clause(clause, weight = p.cost)
+            if e.positive:
+                for c in xrange(len(views)):
+                    t.add_clause([-t.vs[vartype, varname, c], t.vs['pref', i]])
+            else:
+                clause = [t.vs['pref', i]] + [t.vs[vartype, varname, c] for c in xrange(len(views))]
+                t.add_clause(clause)
 
 def preference_names(views):
     view_names = {}
