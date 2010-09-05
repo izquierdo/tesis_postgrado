@@ -8,6 +8,7 @@ import options
 import qrp.parsing
 import ssdsat
 import preferences
+import ontologies
 
 def usage():
     usage_str = "Usage: {program} -t <target> -v <views> -q <query> [-o <ontology>] [-c <costs>] [-p <prefs>]\n"
@@ -23,7 +24,7 @@ def get_options(argv):
         usage()
         sys.exit(1)
 
-    views = queries = ontology = costs = pref_file = target = None
+    views = queries = ontology_file = costs = pref_file = target = None
 
     for opt, arg in opts:
         if opt == "-h":
@@ -34,7 +35,7 @@ def get_options(argv):
         elif opt == "-q":
             queries = arg
         elif opt == "-o":
-            ontology = arg
+            ontology_file = arg
         elif opt == "-c":
             costs = arg
         elif opt == "-p":
@@ -46,12 +47,12 @@ def get_options(argv):
         usage()
         sys.exit(1)
 
-    return (target, views, queries, ontology, costs, pref_file)
+    return (target, views, queries, ontology_file, costs, pref_file)
 
 def main(argv):
     logging.basicConfig(level=options.loglevel, format="%(message)s")
 
-    (target, views, queries, ontology, costs, pref_file) = get_options(argv[1:])
+    (target, views, queries, ontology_file, costs, pref_file) = get_options(argv[1:])
 
     with open(views) as viewfile:
         viewlist = qrp.parsing.parse(viewfile)
@@ -59,11 +60,17 @@ def main(argv):
     with open(queries) as queryfile:
         querylist = qrp.parsing.parse(queryfile)
 
-    if pref_file is None:
-        preflist = None
-    else:
+    if pref_file:
         with open(pref_file) as f:
             preflist = preferences.parse(f)
+    else:
+        preflist = None
+
+    if ontology_file:
+        with open(ontology_file) as f:
+            ontology = ontologies.parse(f)
+    else:
+        ontology = None
 
     targets = {}
     targets["MCD"] = ssdsat.mcd
