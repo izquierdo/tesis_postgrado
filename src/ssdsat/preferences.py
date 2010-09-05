@@ -110,7 +110,7 @@ def parse(file):
     return parser.parse(file.read(), lexer=lexer)
 
 ################################################################################
-# Preference parsing
+# Preference handling
 ################################################################################
 
 def preference_cost_file(preflist, t, copies):
