@@ -6,13 +6,6 @@ from ply import lex, yacc
 
 import qrp.parsing
 
-class Ontology:
-    def __init__(self, specs):
-        self.specs = specs
-
-    def __repr__(self):
-        return "Ontology({0})".format(self.specs)
-
 ################################################################################
 # Ontology parsing
 ################################################################################
@@ -91,6 +84,110 @@ def parse(file):
 
 ################################################################################
 # Ontology handling
+################################################################################
+
+class Ontology:
+    def __init__(self, spec_list):
+        tc = set()
+
+        for a, b in spec_list:
+            tc.add((a, b, ()))
+
+        # transitive closure
+
+        while True:
+            new = set()
+
+            for (spec_a, spec_b) in product(tc, repeat=2):
+                if spec_a == spec_b:
+                    continue
+
+                spec_c = self._join(spec_a, spec_b)
+    
+                if spec_c is not None:
+                    new.add(spec_c)
+
+            pre_len = len(tc)
+            tc.update(new)
+            pos_len = len(tc)
+
+            if pre_len == pos_len:
+                break
+
+            print "updated!"
+
+        import sys; sys.exit(17); return
+
+    def _join(self, spec_a, spec_b):
+        (child_a, parent_a, binding_a) = spec_a
+        (child_b, parent_b, binding_b) = spec_b
+
+        if not parent_a.name == child_b.name:
+            return None
+        
+        if not parent_a.arity == child_b.arity:
+            return None
+
+        equals_set = {}
+
+        for x, y in list(binding_a) + list(binding_b) + zip(parent_a.arguments, child_b.arguments):
+            if x not in equals_set and y not in equals_set:
+                equals_set[x] = equals_set[y] = set([x, y])
+            elif x not in equals_set:
+                equals_set[y].add(x)
+                equals_set[x] = equals_set[y]
+            elif y not in equals_set:
+                equals_set[x].add(y)
+                equals_set[y] = equals_set[x]
+            elif equals_set[x] is not equals_set[y]:
+                equals_set[x].update(equals_set[y])
+                equals_set[y] = equals_set[x]
+
+        seen = set()
+
+        for x in equals_set:
+            if x in seen:
+                continue
+
+            for y in equals_set[x]:
+                seen.add(y)
+
+            print equals_set[x]
+
+        print "Joining %s with %s" % ((child_a, parent_a), (child_b, parent_b))
+
+        return (child_a, parent_b, tuple(zip(parent_a.arguments, child_b.arguments)))
+
+#######################################
+#OLD
+#######################################
+        #self.specs = {}
+
+        #for a, b in specs:
+            #mapping = None
+#
+            #self.specs.setdefault(a.name, []).append(set())
+            #self.specs[a.name][0].add((b, mapping))
+
+        #added = True
+        #idx = 0
+
+        #while added:
+            #added = False
+            #idx += 1
+#
+            #for pred, parents in self.iteritems():
+                #if len(parents) < idx-1:
+                    #continue
+#######################################
+#END OLD
+#######################################
+
+    def __repr__(self):
+        return "Ontology({0})".format(self.specs)
+
+################################################################################
+# Main
 ################################################################################
 
 if __name__ == "__main__":
