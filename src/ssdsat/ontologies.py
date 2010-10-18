@@ -154,34 +154,12 @@ class Ontology:
 
             print equals_set[x]
 
+            if len([var for var in equals_set[x] if var.constant]) > 1:
+                return None
+
         print "Joining %s with %s" % ((child_a, parent_a), (child_b, parent_b))
 
         return (child_a, parent_b, tuple(zip(parent_a.arguments, child_b.arguments)))
-
-#######################################
-#OLD
-#######################################
-        #self.specs = {}
-
-        #for a, b in specs:
-            #mapping = None
-#
-            #self.specs.setdefault(a.name, []).append(set())
-            #self.specs[a.name][0].add((b, mapping))
-
-        #added = True
-        #idx = 0
-
-        #while added:
-            #added = False
-            #idx += 1
-#
-            #for pred, parents in self.iteritems():
-                #if len(parents) < idx-1:
-                    #continue
-#######################################
-#END OLD
-#######################################
 
     def __repr__(self):
         return "Ontology({0})".format(self.specs)
