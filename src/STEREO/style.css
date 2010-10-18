@@ -1,0 +1,145 @@
+html
+{
+	margin:0;
+	padding:0; 
+	text-align: center; 
+}
+
+body
+{
+	font-family: Verdana; 
+	font-size: 11px;
+}
+
+#header
+{ 
+	background-color: #88AA77;
+	height: 50px;
+	color: white;
+	font-size: xx-large;
+	font-family:  Verdana;
+	padding: 5px;
+        text-align: center;
+}
+
+
+/*-------------- Content ----------------------*/
+#wrapper 
+{ 
+	width: 1160px;
+	margin: 11px auto; 
+	text-align: left;
+	padding: 5px;
+	border: 1px solid #88AA77;
+}
+
+
+#content
+{ 
+	padding-right: 11px;
+	float: right;
+	width: 950px; 
+	font-family:  Verdana;
+	padding-bottom: 20px;
+}
+
+#content h3
+{
+	border-bottom: 1px solid #BCE27F;
+	font-size: 11px;
+	font-family:  Verdana;
+	color: #88AA77;
+}
+
+#content img
+{
+	display: inline;
+	float: left;
+	margin: 5px;
+	border-width: 0px;
+}
+
+#content a
+{
+	text-decoration: none;
+	color: #88AA77;
+	border-bottom: 1px dashed #88AA77;
+}
+
+
+#left
+{
+	float:left;
+	width: 150px; 
+	padding: 2px;
+}
+
+#left li
+{
+	list-style-type: none;
+}
+
+#left li p
+{
+	font-size: 11px;
+	border-bottom: 1px solid #BCE27F;
+	font-weight: bold;
+	color: #88AA77;
+}
+
+#left li a
+{
+	text-decoration: none;
+	font-size: 11px;
+	font-family:  Verdana, Georgia;
+	color: #88AA11;
+}
+
+#left li a:hover
+{
+	border-bottom: 1px dashed #88AA77;
+	color: #000000;
+}
+
+#left li a.on
+{
+	border-bottom: 1px dashed #88AA77;
+}
+
+
+#sidenote
+{
+	float: left;
+	width: 150px; 
+	padding: 2px;
+}
+
+#sidenote h3
+{
+	border-bottom: 1px solid #BCE27F;
+	font-size: 11px;
+	color:  #88AA77;
+	font-family:  Verdana;
+	font-weight: bold;
+}
+
+input
+{
+	border-style: solid;
+	border-width: 1px;
+	font-family: Verdana;
+	font-size: 11px;
+	border-color: #88AA77;
+	background-color: #FFFFFF;
+}
+
+#footer
+{ 
+	clear: both;
+	text-align: center;
+}
+
+#footer a
+{
+	text-decoration: none;
+}
