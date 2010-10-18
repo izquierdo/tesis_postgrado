@@ -19,7 +19,7 @@ import logging
 from sat.cnf import Theory
 from itertools import combinations
 
-def mcd_theory(query, views):
+def mcd_theory(query, views, ontology):
     """
     Generate and return the logical theory for an MCD given a query and a
     list of views.
@@ -29,34 +29,34 @@ def mcd_theory(query, views):
 
     t = Theory()
 
-    add_clauses_C1(query, views, t)
-    add_clauses_C2(query, views, t)
-    add_clauses_C3(query, views, t)
-    add_clauses_C4(query, views, t)
-    add_clauses_C5(query, views, t)
-    add_clauses_C6(query, views, t)
-    add_clauses_C7(query, views, t)
-    add_clauses_C9(query, views, t)
-    add_clauses_C10(query, views, t)
-    add_clauses_C11(query, views, t)
-    add_clauses_C12(query, views, t)
-    add_clauses_C13(query, views, t)
-    add_clauses_C14(query, views, t)
+    add_clauses_C1(query, views, ontology, t)
+    add_clauses_C2(query, views, ontology, t)
+    add_clauses_C3(query, views, ontology, t)
+    add_clauses_C4(query, views, ontology, t)
+    add_clauses_C5(query, views, ontology, t)
+    add_clauses_C6(query, views, ontology, t)
+    add_clauses_C7(query, views, ontology, t)
+    add_clauses_C9(query, views, ontology, t)
+    add_clauses_C10(query, views, ontology, t)
+    add_clauses_C11(query, views, ontology, t)
+    add_clauses_C12(query, views, ontology, t)
+    add_clauses_C13(query, views, ontology, t)
+    add_clauses_C14(query, views, ontology, t)
 
     # extra clauses (not appearing in the McdSat paper)
-    add_clauses_E1(query, views, t)
-    add_clauses_E2(query, views, t)
+    add_clauses_E1(query, views, ontology, t)
+    add_clauses_E2(query, views, ontology, t)
 
     # clauses for constant handling
-    add_clauses_D4(query, views, t) # may create new 't' variables
-    add_clauses_D5(query, views, t) # may create new 't' variables
+    add_clauses_D4(query, views, ontology, t) # may create new 't' variables
+    add_clauses_D5(query, views, ontology, t) # may create new 't' variables
 
-    add_clauses_D1(query, views, t)
-    add_clauses_D2(query, views, t)
-    add_clauses_D3(query, views, t)
+    add_clauses_D1(query, views, ontology, t)
+    add_clauses_D2(query, views, ontology, t)
+    add_clauses_D3(query, views, ontology, t)
 
     # C8 clauses are dependent on existing 't' variables
-    add_clauses_C8(query, views, t)
+    add_clauses_C8(query, views, ontology, t)
 
     return t
 
@@ -64,7 +64,7 @@ def mcd_from_model(t):
     """
     """
 
-def add_clauses_C1(query, views, t):
+def add_clauses_C1(query, views, ontology, t):
     """
     Description: At least one view is used
     Formula: \/_{i=0}^n (v_i)
@@ -74,7 +74,7 @@ def add_clauses_C1(query, views, t):
 
     t.add_clause([t.vs['v', i] for i in xrange(0, len(views)+1)])
 
-def add_clauses_C2(query, views, t):
+def add_clauses_C2(query, views, ontology, t):
     """
     Description: At most one view is used
     Formula: v_i => -v_j for 0 <= i, j <= n
@@ -85,7 +85,7 @@ def add_clauses_C2(query, views, t):
     for i, j in combinations(xrange(0, len(views)+1), r=2):
         t.add_clause([-t.vs['v', i], -t.vs['v', j]])
 
-def add_clauses_C3(query, views, t):
+def add_clauses_C3(query, views, ontology, t):
     """
     Description: Null view equals null
     Formula: v_0 => -g_j for 1 <= j <= m
@@ -97,7 +97,7 @@ def add_clauses_C3(query, views, t):
         clause = [-t.vs['v', 0], -t.vs['g', i+1]]
         t.add_clause(clause)
 
-def add_clauses_C4(query, views, t):
+def add_clauses_C4(query, views, ontology, t):
     """
     Description: Views are useful
     Formula: v_i => \/_{j=0}^m (g_j) for 1 <= i <= n
@@ -110,7 +110,7 @@ def add_clauses_C4(query, views, t):
         clause = [-t.vs['v', i]] + or_gs
         t.add_clause(clause)
 
-def add_clauses_C5(query, views, t):
+def add_clauses_C5(query, views, ontology, t):
     """
     Description: Subgoals are covered at most once
     Formula: z_{j,k,i} => -z_{j,l,i} for appropriate i, j, k, l with k != l
@@ -124,7 +124,7 @@ def add_clauses_C5(query, views, t):
                 clause = [-t.vs['z', j, k, i], -t.vs['z', j, l, i]]
                 t.add_clause(clause)
 
-def add_clauses_C6(query, views, t):
+def add_clauses_C6(query, views, ontology, t):
     """
     Description: Scope of views
     Formula: v_i => -g_j if query goal j can't be covered by view i
@@ -137,7 +137,7 @@ def add_clauses_C6(query, views, t):
             can_cover = False
 
             for p in v.body:
-                mapping = query_p.unify(p)
+                mapping = query_p.unify(p, ontology)
 
                 if mapping is None:
                     continue
@@ -160,7 +160,7 @@ def add_clauses_C6(query, views, t):
                 clause = [-t.vs['v', i], -t.vs['g', j]]
                 t.add_clause(clause)
 
-def add_clauses_C7(query, views, t):
+def add_clauses_C7(query, views, ontology, t):
     """
     Description: Consistency
     Formula: v_i /\\ g_j <=> \\/ z_{j,k,i} for appropriate i, j, k
@@ -181,7 +181,7 @@ def add_clauses_C7(query, views, t):
                 goal_clause = [-t.vs['z', j, k, i], t.vs['g', j]]
                 t.add_clause(goal_clause)
 
-def add_clauses_C8(query, views, t):
+def add_clauses_C8(query, views, ontology, t):
     """
     Description: Dead variables
     Formula: v_i => -t_{x,y} for all x, y with y not in view i
@@ -198,7 +198,7 @@ def add_clauses_C8(query, views, t):
             clause = [-t.vs['v', i], -t.vs[var]]
             t.add_clause(clause)
 
-def add_clauses_C9(query, views, t):
+def add_clauses_C9(query, views, ontology, t):
     """
     Description: Head homomorphism
     Formula: v_i /\\ t_{x,y} => -t{x,yp} for all existential y, yp in view i
@@ -214,7 +214,7 @@ def add_clauses_C9(query, views, t):
                     clause = [-t.vs['v', i]] + or_ts
                     t.add_clause(clause)
 
-def add_clauses_C10(query, views, t):
+def add_clauses_C10(query, views, ontology, t):
     """
     Description: Distinguished
     Formula: v_i => -t_{x,y} for x distinguished in the query and y existential
@@ -235,7 +235,7 @@ def add_clauses_C10(query, views, t):
             clause = [-t.vs['v', i], -t.vs['t', x, y, i]]
             t.add_clause(clause)
 
-def add_clauses_C11(query, views, t):
+def add_clauses_C11(query, views, ontology, t):
     """
     Description: Existential
     Formula: v_i /\\ t_{x,y} => g_j for existential y in view i and goals j
@@ -260,7 +260,7 @@ def add_clauses_C11(query, views, t):
                     clause = [-t.vs['v', i], -t.vs['t', x, y, i], t.vs['g', j]]
                     t.add_clause(clause)
 
-def add_clauses_C12(query, views, t):
+def add_clauses_C12(query, views, ontology, t):
     """
     Description: Matching
     Formula: v_i /\\ z_{j,k,i} => t_{x,y} for x and y that must match if goal j
@@ -272,7 +272,7 @@ def add_clauses_C12(query, views, t):
     for (i, v) in enumerate(views, 1):
         for (k, p) in enumerate(v.body, 1):
             for (j, g) in enumerate(query.body, 1):
-                mapping = g.unify(p)
+                mapping = g.unify(p, ontology)
 
                 if mapping:
                     for (x, y) in mapping:
@@ -282,7 +282,7 @@ def add_clauses_C12(query, views, t):
                     clause = [-t.vs['v', i], -t.vs['z', j, k, i]]
                     t.add_clause(clause)
 
-def add_clauses_C13(query, views, t):
+def add_clauses_C13(query, views, ontology, t):
     """
     Description: 1-1 on existential vars
     Formula: v_i /\\ t_{x,y} => -t_{xp,y} for x existential in the query, xp
@@ -306,7 +306,7 @@ def add_clauses_C13(query, views, t):
                     t.add_clause(clause)
 
 
-def add_clauses_C14(query, views, t):
+def add_clauses_C14(query, views, ontology, t):
     """
     Description: If the view has no existential variables, the MCD covers at
     most one goal.
@@ -321,7 +321,7 @@ def add_clauses_C14(query, views, t):
                 clause = [-t.vs['v', i], -t.vs['g', j], -t.vs['g', k]]
                 t.add_clause(clause)
 
-def add_clauses_E1(query, views, t):
+def add_clauses_E1(query, views, ontology, t):
     """
     Description: Remove unnecesary mappings
     Formula: t_{x,y} /\\ v_i => (\/ z_{j,k,i} for j, k where mapping t_{x,y} is
@@ -335,7 +335,7 @@ def add_clauses_E1(query, views, t):
     for (i, v) in enumerate(views, 1):
         for (k, p) in enumerate(v.body, 1):
             for (j, g) in enumerate(query.body, 1):
-                mapping = g.unify(p)
+                mapping = g.unify(p, ontology)
 
                 if mapping:
                     for (x, y) in mapping:
@@ -344,7 +344,7 @@ def add_clauses_E1(query, views, t):
     for ((v_var, t_var), z_vars) in needed.iteritems():
         t.add_clause([v_var, t_var] + z_vars)
 
-def add_clauses_E2(query, views, t):
+def add_clauses_E2(query, views, ontology, t):
     """
     Description: Null view is useless
     Formula: -v_0
@@ -356,7 +356,7 @@ def add_clauses_E2(query, views, t):
 
 
 
-def add_clauses_D1(query, views, t):
+def add_clauses_D1(query, views, ontology, t):
     """
     Description: Direct inconsistency 1
     Formula: t_{x,A} => -t_{x,B} if A, B are constants
@@ -373,7 +373,7 @@ def add_clauses_D1(query, views, t):
             clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 
-def add_clauses_D2(query, views, t):
+def add_clauses_D2(query, views, ontology, t):
     """
     Description: Direct inconsistency 2
     Formula: t_{A,x} => -t_{B,x} if A, B are constants
@@ -390,7 +390,7 @@ def add_clauses_D2(query, views, t):
             clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 
-def add_clauses_D3(query, views, t):
+def add_clauses_D3(query, views, ontology, t):
     """
     Description: Direct inconsistency 3
     Formula: -t_{A,B} if A, B are constants and A != B
@@ -406,7 +406,7 @@ def add_clauses_D3(query, views, t):
             clause = [-t.vs[var]]
             t.add_clause(clause)
 
-def add_clauses_D4(query, views, t):
+def add_clauses_D4(query, views, ontology, t):
     """
     Description: Transitivity 1
     Formula: t_{A,y} /\\ t_{x,y} /\\ t_{x,z} => t_{A,z} if A is a constant
@@ -429,7 +429,7 @@ def add_clauses_D4(query, views, t):
                                 t.vs['t', A, z, i]]
                         t.add_clause(clause)
 
-def add_clauses_D5(query, views, t):
+def add_clauses_D5(query, views, ontology, t):
     """
     Description: Transitivity 2
     Formula: t_{y,A} /\\ t_{y,x} /\\ t_{z,x} => t_{z,A} if A is a constant

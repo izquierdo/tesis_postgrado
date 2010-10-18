@@ -13,7 +13,7 @@ from qrp.views import View, Predicate
 
 def mcd(views, queries, ontology, costs, preflist):
     # generate the MCD theory
-    t = mcdsat.mcd.mcd_theory(queries[0], views)
+    t = mcdsat.mcd.mcd_theory(queries[0], views, ontology)
 
     # add preferences to the theory
     if preflist:
@@ -32,7 +32,7 @@ def mcd(views, queries, ontology, costs, preflist):
 
 def rw(views, queries, ontology, costs, preflist):
     # generate the MCD theory
-    t = mcdsat.mcd.mcd_theory(queries[0], views)
+    t = mcdsat.mcd.mcd_theory(queries[0], views, ontology)
 
     # add preferences to the theory
     if preflist:

@@ -114,9 +114,7 @@ class Ontology:
             if pre_len == pos_len:
                 break
 
-            print "updated!"
-
-        import sys; sys.exit(17); return
+        self.specs = tc
 
     def _join(self, spec_a, spec_b):
         (child_a, parent_a, binding_a) = spec_a
@@ -152,12 +150,8 @@ class Ontology:
             for y in equals_set[x]:
                 seen.add(y)
 
-            print equals_set[x]
-
             if len([var for var in equals_set[x] if var.constant]) > 1:
                 return None
-
-        print "Joining %s with %s" % ((child_a, parent_a), (child_b, parent_b))
 
         return (child_a, parent_b, tuple(zip(parent_a.arguments, child_b.arguments)))
 

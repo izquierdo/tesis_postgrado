@@ -52,13 +52,26 @@ class Predicate:
     arity = property(lambda self : len(self.arguments))
 
     def unify(self, other, ontology = None):
-        if self.name != other.name:
-            return None
+        print "call to unify!"
+        if self.name == other.name and self.arity == other.arity:
+            print "unify returned first test"
+            return zip(self.arguments, other.arguments)
 
-        if self.arity != other.arity:
-            return None
+        print "passed first test..."
 
-        return zip(self.arguments, other.arguments)
+        for (child, parent, binding) in ontology.specs:
+            print "looking at spec %s" % (str((child,parent,binding)))
+            print "self.name=%s" % self.name
+            print "other.name=%s" % other.name
+            if self.name == parent.name and self.arity == parent.arity:
+                if other.name == child.name and other.arity == child.arity:
+                    return zip(self.arguments, parent.arguments) + \
+                            list(binding) + \
+                            zip(child.arguments, other.arguments)
+
+        print "unify returned None"
+
+        return None
 
 class Argument:
     def __init__(self, name, constant):
