@@ -26,19 +26,27 @@ body
 /*-------------- Content ----------------------*/
 #wrapper 
 { 
-	width: 1160px;
 	margin: 11px auto; 
 	text-align: left;
 	padding: 5px;
 	border: 1px solid #88AA77;
 }
 
-
-#content
+#services
 { 
 	padding-right: 11px;
+	float: left;
+	/*width: 950px; */
+	font-family:  Verdana;
+	padding-bottom: 20px;
+}
+
+#query
+{ 
+        width: 600px;
+	padding-right: 11px;
 	float: right;
-	width: 950px; 
+	/*width: 950px; */
 	font-family:  Verdana;
 	padding-bottom: 20px;
 }

@@ -1,6 +1,13 @@
 <?php include 'include/data.php'; ?>
-
 <?php include 'include/header.html'; ?>
+
+<?php
+/*********************************************************************
+    SERVICES
+*********************************************************************/
+?>
+
+<div id="services">
 
 <form action="run.php" method="GET">
 
@@ -9,6 +16,16 @@
 <div style="border-style: solid; border-width: 1px; padding: 5px;">
 <?= nl2br($services_text) ?>
 </div>
+
+</div>
+
+<?php
+/*********************************************************************
+    QUERY
+*********************************************************************/
+?>
+
+<div id="query">
 
 <h2>Query</h2>
 
@@ -28,11 +45,6 @@ foreach ($queries_text as $q) {
 </select>
 
 <!---------------------------------------------------------------------------->
-
-<?php
-/*
-?>
-
 
 <h2>Ontology</h2>
 
@@ -57,10 +69,6 @@ foreach ($ontologies as $ontology) {
 </div>
 
 <!---------------------------------------------------------------------------->
-<?php
-*/
-?>
-
 
 <h2>Preferences</h2>
 
@@ -95,5 +103,7 @@ foreach ($preferences_text as $e) {
 <input type="submit" name="run" value="Best rewriting"/>
 
 </form>
+
+</div>
 
 <?php include 'include/footer.html'; ?>
