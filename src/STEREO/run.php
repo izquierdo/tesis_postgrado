@@ -1,13 +1,5 @@
-<?php include 'data.php'; ?>
-
-<html>
-<head>
-    <title>
-        STEREO results
-    </title>
-
-    <link rel="stylesheet" href="http://www.izquierdo.com.ve/stereo_media/css/style.css" type="text/css">
-</head>
+<?php include 'include/data.php'; ?>
+<?php include 'include/header.html'; ?>
 
 <?php
 
@@ -122,3 +114,5 @@ else
       echo nl2br($result);
       echo "Results obtained in $rounded seconds.";
 ?>
+
+<?php include 'include/footer.html'; ?>
