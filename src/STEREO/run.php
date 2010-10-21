@@ -5,7 +5,7 @@
 
 function RunSsdsat($queryfile, $viewfile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/ssdsat/driver.py -t RW -q $queryfile -v $viewfile";
+    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t RW -q $queryfile -v $viewfile";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
