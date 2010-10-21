@@ -3,9 +3,9 @@
 
 <?php
 
-function RunSsdsat($queryfile, $viewfile)
+function RunSsdsat($queryfile, $viewfile, $ontologyfile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t RW -q $queryfile -v $viewfile";
+    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t RW -q $queryfile -v $viewfile -o $ontologyfile";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
@@ -34,9 +34,9 @@ function RunSsdsat($queryfile, $viewfile)
     return $result;
 }
 
-function RunSsdsatBest($queryfile, $viewfile, $preffile)
+function RunSsdsatBest($queryfile, $viewfile, $ontologyfile, $preffile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/ssdsat/driver.py -t BESTRW -q $queryfile -v $viewfile -p $preffile";
+    $program = "/usr/local/bin/python /home/idaniel/ssdsat/driver.py -t BESTRW -q $queryfile -v $viewfile -p $preffile -o $ontologyfile";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
@@ -95,9 +95,9 @@ else
  *********************************************************************************/
 
       if ($all)
-          $result = RunSsdsat($queries_files[intval($q)], $services_file);
+          $result = RunSsdsat($queries_files[intval($q)], $services_file, $ontologies_files[intval($o)]);
       else
-          $result = RunSsdsatBest($queries_files[intval($q)], $services_file, $preferences_files[intval($p)]);
+          $result = RunSsdsatBest($queries_files[intval($q)], $services_file, $ontologies_files[intval($o)], $preferences_files[intval($p)]);
 ?>
 
 <?php
