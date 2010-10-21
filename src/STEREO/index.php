@@ -19,6 +19,30 @@
 
 </div>
 
+<!---------------------------------------------------------------------------->
+
+<h2>Ontology</h2>
+
+<div id="ontology_select" style="padding: 5px;">
+
+<?php
+foreach ($ontologies as $ontology) {
+?>
+
+<?= $ontology["name"] ?>
+
+<input type="radio" name="ontology" value="<?= $ontology["name"] ?>" onclick="displayOntology('<?= $ontology["text"] ?>')" />
+<br/>
+
+<?php
+}
+?>
+
+</div>
+
+<div id="ontology_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
+</div>
+
 <?php
 /*********************************************************************
     QUERY
@@ -43,30 +67,6 @@ foreach ($queries_text as $q) {
 }
 ?>
 </select>
-
-<!---------------------------------------------------------------------------->
-
-<h2>Ontology</h2>
-
-<div id="ontology_select" style="padding: 5px;">
-
-<?php
-foreach ($ontologies as $ontology) {
-?>
-
-<?= $ontology["name"] ?>
-
-<input type="radio" name="ontology" value="<?= $ontology["name"] ?>" onclick="displayOntology('<?= $ontology["text"] ?>')" />
-<br/>
-
-<?php
-}
-?>
-
-</div>
-
-<div id="ontology_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
-</div>
 
 <!---------------------------------------------------------------------------->
 
