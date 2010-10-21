@@ -55,12 +55,13 @@ class Predicate:
         if self.name == other.name and self.arity == other.arity:
             return zip(self.arguments, other.arguments)
 
-        for (child, parent, binding) in ontology.specs:
-            if self.name == parent.name and self.arity == parent.arity:
-                if other.name == child.name and other.arity == child.arity:
-                    return zip(self.arguments, parent.arguments) + \
-                            list(binding) + \
-                            zip(child.arguments, other.arguments)
+        if ontology:
+            for (child, parent, binding) in ontology.specs:
+                if self.name == parent.name and self.arity == parent.arity:
+                    if other.name == child.name and other.arity == child.arity:
+                        return zip(self.arguments, parent.arguments) + \
+                                list(binding) + \
+                                zip(child.arguments, other.arguments)
 
         return None
 
