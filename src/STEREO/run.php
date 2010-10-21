@@ -36,7 +36,7 @@ function RunSsdsat($queryfile, $viewfile, $ontologyfile)
 
 function RunSsdsatBest($queryfile, $viewfile, $ontologyfile, $preffile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/ssdsat/driver.py -t BESTRW -q $queryfile -v $viewfile -p $preffile -o $ontologyfile";
+    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t BESTRW -q $queryfile -v $viewfile -p $preffile -o $ontologyfile";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
