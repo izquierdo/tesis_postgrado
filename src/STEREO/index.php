@@ -17,8 +17,6 @@
 <?= nl2br($services_text) ?>
 </div>
 
-</div>
-
 <!---------------------------------------------------------------------------->
 
 <h2>Ontology</h2>
@@ -41,6 +39,8 @@ foreach ($ontologies as $ontology) {
 </div>
 
 <div id="ontology_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
+</div>
+
 </div>
 
 <?php
