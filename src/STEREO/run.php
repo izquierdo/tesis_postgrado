@@ -100,6 +100,15 @@ else
           $result = RunSsdsatBest($queries_files[intval($q)], $services_file, $ontologies_files[intval($o)], $preferences_files[intval($p)]);
 ?>
 
+<h2>
+<?php
+      if ($all)
+          echo "All rewritings for selected instance:";
+      else
+          echo "Best rewriting for selected instance:";
+?>
+</h2><br/><br/>
+
 <?php
 /********************************************************************************* 
     END TIMING
