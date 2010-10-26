@@ -11,7 +11,7 @@ import preferences
 import ontologies
 
 def usage():
-    usage_str = "Usage: {program} -t <target> -v <views> -q <query> [-o <ontology>] [-c <costs>] [-p <prefs>]\n"
+    usage_str = "Usage: {program} -t <target> -v <views> -q <query> [-o <ontology>] [-c <costs>] [-p <prefs>] [-l <cnf output file prefix>]\n"
     usage_str += " where <target> is one of the following: MCD, RW\n"
     usage_str += " and all other parameters are filenames\n"
 
@@ -19,7 +19,7 @@ def usage():
 
 def get_options(argv):
     try:
-        opts, args = getopt.getopt(argv, "hv:q:o:c:p:t:")
+        opts, args = getopt.getopt(argv, "hv:q:o:c:p:t:l:d:")
     except getopt.GetoptError:
         usage()
         sys.exit(1)
@@ -42,6 +42,12 @@ def get_options(argv):
             pref_file = arg
         elif opt == "-t":
             target = arg
+        elif opt == "-l":
+            options.user_options["cnfprefix"] = arg
+        elif opt == "-d":
+            #undocumented feature to activate debugging with an output file 
+            options.logging_output_file = arg
+            options.loglevel = logging.DEBUG
 
     if not views or not queries or not target:
         usage()
@@ -50,9 +56,12 @@ def get_options(argv):
     return (target, views, queries, ontology_file, costs, pref_file)
 
 def main(argv):
-    logging.basicConfig(level=options.loglevel, format="%(message)s")
-
     (target, views, queries, ontology_file, costs, pref_file) = get_options(argv[1:])
+
+    if options.logging_output_file:
+        logging.basicConfig(level=options.loglevel, filename=options.logging_output_file, filemode="w", format="%(message)s")
+    else:
+        logging.basicConfig(level=options.loglevel, format="%(message)s")
 
     with open(views) as viewfile:
         viewlist = qrp.parsing.parse(viewfile)

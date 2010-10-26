@@ -129,7 +129,12 @@ def compile_ddnnf(theory):
 
     logging.info("[Compile to DNNF]")
 
-    with NamedTemporaryFile(prefix="ssdsat.", suffix=".cnf") as cnf_file:
+    if "cnfprefix" in options.user_options:
+        selected_cnf_file = open(options.user_options["cnfprefix"] + ".cnf", "w")
+    else:
+        selected_cnf_file = NamedTemporaryFile(prefix="ssdsat.", suffix=".cnf")
+
+    with selected_cnf_file as cnf_file:
         theory.write_unweighted_cnf(cnf_file)
         cnf_file.seek(0)
 
