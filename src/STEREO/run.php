@@ -77,6 +77,7 @@ function RunSsdsatBest($queryfile, $viewfile, $ontologyfile, $preffile)
 
 <?php
 
+$s = $_GET["services"];
 $q = $_GET["query"];
 $o = $_GET["ontology"];
 $p = $_GET["preference"];
@@ -104,9 +105,9 @@ else
  *********************************************************************************/
 
       if ($all)
-          $result = RunSsdsat($queries_files[intval($q)], $services_file, $ontologies_files[intval($o)]);
+          $result = RunSsdsat($queries_files[intval($q)], $services_files[intval($s)], $ontologies_files[intval($o)]);
       else
-          $result = RunSsdsatBest($queries_files[intval($q)], $services_file, $ontologies_files[intval($o)], $preferences_files[intval($p)]);
+          $result = RunSsdsatBest($queries_files[intval($q)], $services_files[intval($s)], $ontologies_files[intval($o)], $preferences_files[intval($p)]);
 ?>
 
 <h2>
