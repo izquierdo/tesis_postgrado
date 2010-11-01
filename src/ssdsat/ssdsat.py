@@ -197,6 +197,7 @@ def model_enumeration_time(nnf_filename):
     model_enum_time_line = models[-1]
     time_str = re.search("^main: total time (.+) seconds$", model_enum_time_line).group(1)
 
+    #TODO deberia outputear cuantos calcule, para hacer la division correctamente
     return float(time_str)
 
 def count_models(nnf_filename):
