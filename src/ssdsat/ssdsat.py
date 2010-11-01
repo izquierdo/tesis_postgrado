@@ -57,6 +57,11 @@ def rw(views, queries, ontology, costs, preflist):
         print >> ff, modelcount
         ff.close()
 
+        esttime = model_enumeration_time(nnf_filename)
+        ff = open(options.logging_output_file + ".time", "w")
+        print >> ff, esttime
+        ff.close()
+
     for m in models:
         print rw_rebuild(queries[0], views, rw_t, m)
 
@@ -87,6 +92,11 @@ def bestrw(views, queries, ontology, costs, preflist):
         modelcount = count_models(nnf_filename)
         ff = open(options.logging_output_file + ".count", "w")
         print >> ff, modelcount
+        ff.close()
+
+        esttime = model_enumeration_time(nnf_filename)
+        ff = open(options.logging_output_file + ".time", "w")
+        print >> ff, esttime
         ff.close()
 
     print cost, rw_rebuild(queries[0], views, pref_rw_t, model)
@@ -165,6 +175,29 @@ def compile_ddnnf(theory):
         nnf_filename = "{0}.nnf".format(cnf_file.name)
 
     return nnf_filename
+
+def model_enumeration_time(nnf_filename):
+    """
+    Count the models of the d-DNNF theory specified at the given file and
+    return the number as an integer.
+    """
+
+    logging.info("[Calculate model enumeration time]")
+
+    args = [options.models,
+            "--write-models",
+            "--num", str(options.max_models),
+            nnf_filename]
+
+    models_process = Popen(args, stdout = PIPE)
+    models_process.wait()
+
+    models = models_process.stdout.readlines()
+
+    model_enum_time_line = models[-1]
+    time_str = re.search("^main: total time (.+) seconds$", model_enum_time_line).group(1)
+
+    return float(time_str)
 
 def count_models(nnf_filename):
     """
