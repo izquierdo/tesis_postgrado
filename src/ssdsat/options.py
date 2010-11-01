@@ -9,7 +9,7 @@ models = sys.path[0] + "/models/models"
 bestmodel = sys.path[0] + "/models/bestmodel"
 
 # maximum number of models to be displayed
-max_models = 1073741824
+max_models = 50
 
 # logging level and output file
 loglevel = logging.DEBUG
