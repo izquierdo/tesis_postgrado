@@ -63,6 +63,8 @@ foreach ($preferences_files as $f)
 # Data
 ################################################################################
 #
+
+#TODO creo que esto no se usa. verificar y borrar en ese caso
 $services = array(
     array("name" => "0", "text" => "servicios0"),
     array("name" => "1", "text" => "servicios1"),
