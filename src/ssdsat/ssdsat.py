@@ -2,6 +2,7 @@ from tempfile import NamedTemporaryFile
 from subprocess import Popen, PIPE
 import os
 import logging
+import re
 
 import mcdsat.mcd
 import mcdsat.rw
@@ -49,6 +50,13 @@ def rw(views, queries, ontology, costs, preflist):
     # enumerate the models of the d-DNNF theory
     models = enumerate_models(nnf_filename)
 
+    #TODO move somewhere more suitable
+    if options.logging_output_file:
+        modelcount = count_models(nnf_filename)
+        ff = open(options.logging_output_file + ".count", "w")
+        print >> ff, modelcount
+        ff.close()
+
     for m in models:
         print rw_rebuild(queries[0], views, rw_t, m)
 
@@ -73,6 +81,13 @@ def bestrw(views, queries, ontology, costs, preflist):
 
     # find the best model of the d-DNNF theory and its cost
     (cost, model) = enumerate_best_model(nnf_filename, cost_file)
+
+    #TODO move somewhere more suitable
+    if options.logging_output_file:
+        modelcount = count_models(nnf_filename)
+        ff = open(options.logging_output_file + ".count", "w")
+        print >> ff, modelcount
+        ff.close()
 
     print cost, rw_rebuild(queries[0], views, pref_rw_t, model)
 
@@ -150,6 +165,27 @@ def compile_ddnnf(theory):
         nnf_filename = "{0}.nnf".format(cnf_file.name)
 
     return nnf_filename
+
+def count_models(nnf_filename):
+    """
+    Count the models of the d-DNNF theory specified at the given file and
+    return the number as an integer.
+    """
+
+    logging.info("[Count models]")
+
+    args = [options.models,
+            nnf_filename]
+
+    models_process = Popen(args, stdout = PIPE)
+    models_process.wait()
+
+    models = models_process.stdout.readlines()
+
+    model_count_line = models[3]
+    model_str = re.search("#models=(\d+) ", model_count_line).group(1)
+
+    return int(model_str)
 
 def enumerate_models(nnf_filename):
     """
