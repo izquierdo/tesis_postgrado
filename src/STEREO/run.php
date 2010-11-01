@@ -132,7 +132,8 @@ else
 
       $lines = explode("\n", $result);
       $number_results = count($lines)-1;
-      $total_results = 0;
+
+      $model_count = (int) trim(file_get_contents($outputfilenames . ".out.count"));
 ?>
 
 <div style="border-style: dashed; border-width: 1px; width: 100%">
@@ -144,8 +145,8 @@ else
 </div><br/>
 
 <?php
-      echo "Showing $number_results out of $total_results total rewritings.<br/>";
-      echo "Results obtained in $rounded seconds.<br/>";
+      echo "Showing <strong>$number_results</strong> out of <strong>$model_count</strong> total rewritings.<br/>";
+      echo "Results obtained in <strong>$rounded</strong> seconds.<br/>";
 ?>
 
 <br/>
@@ -155,7 +156,7 @@ else
 ?>
 
 <ul>
-<li>Download the <a href="<?php echo "/STEREO/download/$dlfiles.out"; ?>">human-readable CNF file and debugging output</a></li>
+<li>Download the <a href="<?php echo "/STEREO/download/$dlfiles.out"; ?>">human-readable CNF theory and program output</a></li>
 <li>Download the generated <a href="<?php echo "/STEREO/download/$dlfiles.cnf"; ?>">CNF file</a> for this instance</li>
 <li>Download the compiled <a href="<?php echo "/STEREO/download/$dlfiles.cnf.nnf"; ?>">NNF file</a></li>
 </ul>
