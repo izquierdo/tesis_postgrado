@@ -117,7 +117,7 @@ else
       else
           echo "Best rewriting for selected instance:";
 ?>
-</h2><br/><br/>
+</h2>
 
 <?php
 /********************************************************************************* 
@@ -130,8 +130,22 @@ else
       $totaltime = ($endtime - $starttime);
       $rounded = round($totaltime, 3);
 
+      $lines = explode("\n", $result);
+      $number_results = count($lines)-1;
+      $total_results = 0;
+?>
+
+<div style="border-style: dashed; border-width: 1px; width: 100%">
+
+<?php
       echo nl2br($result);
-      echo "Results obtained in $rounded seconds.";
+?>
+
+</div><br/>
+
+<?php
+      echo "Showing $number_results out of $total_results total rewritings.<br/>";
+      echo "Results obtained in $rounded seconds.<br/>";
 ?>
 
 <br/>
