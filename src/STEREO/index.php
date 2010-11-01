@@ -13,8 +13,26 @@
 
 <h2>Services</h2>
 
-<div style="border-style: solid; border-width: 1px; padding: 5px;">
-<?= nl2br($services_text) ?>
+<div id="services_select" style="padding: 5px;">
+
+<?php
+$i = 0;
+
+foreach ($services_text as $e) {
+?>
+
+<?= $i ?>
+<input type="radio" name="services" value="<?= $i ?>" onclick="displayServices('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
+<!--<br/>-->
+
+<?php
+    $i = $i + 1;
+}
+?>
+
+</div>
+
+<div id="services_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
 </div>
 
 <!---------------------------------------------------------------------------->
