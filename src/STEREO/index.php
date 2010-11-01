@@ -1,6 +1,8 @@
 <?php include 'include/data.php'; ?>
 <?php include 'include/header.html'; ?>
 
+<form action="run.php" method="GET">
+
 <?php
 /*********************************************************************
     SERVICES
@@ -9,12 +11,28 @@
 
 <div id="services">
 
-<form action="run.php" method="GET">
-
 <h2>Services</h2>
 
-<div style="border-style: solid; border-width: 1px; padding: 5px;">
-<?= nl2br($services_text) ?>
+<div id="services_select" style="padding: 5px;">
+
+<?php
+$i = 0;
+
+foreach ($services_text as $e) {
+?>
+
+<?= $i ?>
+<input type="radio" name="services" value="<?= $i ?>" onclick="displayServices('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
+<!--<br/>-->
+
+<?php
+    $i = $i + 1;
+}
+?>
+
+</div>
+
+<div id="services_display" style="border-style: solid; border-width: 1px; padding: 5px; display: none;">
 </div>
 
 <!---------------------------------------------------------------------------->
@@ -24,15 +42,17 @@
 <div id="ontology_select" style="padding: 5px;">
 
 <?php
-foreach ($ontologies as $ontology) {
+$i = 0;
+
+foreach ($ontologies_text as $e) {
 ?>
 
-<?= $ontology["name"] ?>
-
-<input type="radio" name="ontology" value="<?= $ontology["name"] ?>" onclick="displayOntology('<?= $ontology["text"] ?>')" />
-<br/>
+<?= $i ?>
+<input type="radio" name="ontology" value="<?= $i ?>" onclick="displayOntology('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
+<!--<br/>-->
 
 <?php
+    $i = $i + 1;
 }
 ?>
 
@@ -82,7 +102,7 @@ foreach ($preferences_text as $e) {
 
 <?= $i ?>
 <input type="radio" name="preference" value="<?= $i ?>" onclick="displayPreference('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
-<br/>
+<!--<br/>-->
 
 <?php
     $i = $i + 1;
