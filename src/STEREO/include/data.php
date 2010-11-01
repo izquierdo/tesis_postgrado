@@ -56,10 +56,10 @@ foreach ($preferences_files as $f)
 ################################################################################
 
 $ontologies = array(
-    array("name" => "1", "text" => "ontologia1"),
-    array("name" => "2", "text" => "ontologia2"),
-    array("name" => "3", "text" => "ontologia3"),
-    array("name" => "4", "text" => "ontologia4"),
+    array("name" => "0", "text" => "ontologia1"),
+    array("name" => "1", "text" => "ontologia2"),
+    array("name" => "2", "text" => "ontologia3"),
+    array("name" => "3", "text" => "ontologia4"),
     );
 
 $preferences = array(

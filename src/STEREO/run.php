@@ -5,7 +5,14 @@
 
 function RunSsdsat($queryfile, $viewfile, $ontologyfile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t RW -q $queryfile -v $viewfile -o $ontologyfile";
+    $qb = basename($queryfile);
+    $vb = basename($viewfile);
+    $ob = basename($ontologyfile);
+
+    #TODO move it from /tmp
+    #$outputfilenames = "/home/idaniel/stereo_results/" . "stereo-$qb-$vb-$ob";
+    $outputfilenames = "/tmp/stereo_results/" . "stereo-$qb-$vb-$ob";
+    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t RW -q $queryfile -v $viewfile -o $ontologyfile -d $outputfilenames.out -l $outputfilenames";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
@@ -13,7 +20,7 @@ function RunSsdsat($queryfile, $viewfile, $ontologyfile)
             2 => array("pipe", "w")
             );
 
-    $cwd = NULL;
+    $cwd = "/home/idaniel/tesis_postgrado/src/ssdsat";
 
     $env = array();
 
@@ -123,5 +130,13 @@ else
       echo nl2br($result);
       echo "Results obtained in $rounded seconds.";
 ?>
+
+<br/>
+
+<ul>
+<li>Download the <a href="">human-readable CNF file and debugging output</a></li>
+<li>Download the generated <a href="">CNF file</a> for this instance</li>
+<li>Download the compiled <a href="">NNF file</a></li>
+</ul>
 
 <?php include 'include/footer.html'; ?>
