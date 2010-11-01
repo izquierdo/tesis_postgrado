@@ -1,0 +1,2 @@
+flight(X, Y, T) <= trip(X, Y)
+train(X, Y, T) <= trip(X, Y)
