@@ -45,7 +45,17 @@ function RunSsdsat($queryfile, $viewfile, $ontologyfile)
 
 function RunSsdsatBest($queryfile, $viewfile, $ontologyfile, $preffile)
 {
-    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t BESTRW -q $queryfile -v $viewfile -p $preffile -o $ontologyfile";
+    global $outputfilenames;
+
+    $qb = basename($queryfile);
+    $vb = basename($viewfile);
+    $ob = basename($ontologyfile);
+
+    #TODO move it from /tmp
+    #$outputfilenames = "/home/idaniel/stereo_results/" . "stereo-$qb-$vb-$ob";
+    $outputfilenames = "/tmp/stereo_results/" . "stereo-$qb-$vb-$ob";
+
+    $program = "/usr/local/bin/python /home/idaniel/tesis_postgrado/src/ssdsat/driver.py -t BESTRW -q $queryfile -v $viewfile -p $preffile -o $ontologyfile -d $outputfilenames.out -l $outputfilenames";
 
     $descriptorspec = array(
             0 => array("pipe", "r"),
@@ -151,7 +161,12 @@ else
       if ($number_results < $model_count)
       {
           $time_mymodels = (double) trim(file_get_contents($outputfilenames . ".out.time"));
-          $time_allmodels = max(((double)$model_count)/((double)$number_results) * $time_mymodels, 0);
+
+          if ($number_results < 1)
+              $time_allmodels = 0;
+          else
+              $time_allmodels = max(((double)$model_count)/((double)$number_results) * $time_mymodels, 0);
+
           echo "Estimated time needed to enumerate all results: <strong>$time_allmodels</strong> seconds.<br/>";
       }
 ?>
