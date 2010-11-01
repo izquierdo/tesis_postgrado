@@ -67,7 +67,7 @@ def rw(views, queries, ontology, costs, preflist):
 
 def bestrw(views, queries, ontology, costs, preflist):
     # generate the MCD theory
-    t = mcdsat.mcd.mcd_theory(queries[0], views)
+    t = mcdsat.mcd.mcd_theory(queries[0], views, ontology)
 
     # add MCD preferences to the theory
     pref_t = preferences.preference_clauses(queries[0], views, preflist, t)
