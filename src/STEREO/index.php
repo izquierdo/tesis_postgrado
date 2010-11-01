@@ -24,15 +24,17 @@
 <div id="ontology_select" style="padding: 5px;">
 
 <?php
-foreach ($ontologies as $ontology) {
+$i = 0;
+
+foreach ($ontologies_text as $e) {
 ?>
 
-<?= $ontology["name"] ?>
-
-<input type="radio" name="ontology" value="<?= $ontology["name"] ?>" onclick="displayOntology('<?= $ontology["text"] ?>')" />
+<?= $i ?>
+<input type="radio" name="ontology" value="<?= $i ?>" onclick="displayOntology('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
 <br/>
 
 <?php
+    $i = $i + 1;
 }
 ?>
 
