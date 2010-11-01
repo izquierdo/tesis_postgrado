@@ -1,6 +1,8 @@
 <?php include 'include/data.php'; ?>
 <?php include 'include/header.html'; ?>
 
+<form action="run.php" method="GET">
+
 <?php
 /*********************************************************************
     SERVICES
@@ -8,8 +10,6 @@
 ?>
 
 <div id="services">
-
-<form action="run.php" method="GET">
 
 <h2>Services</h2>
 
@@ -31,7 +31,7 @@ foreach ($ontologies_text as $e) {
 
 <?= $i ?>
 <input type="radio" name="ontology" value="<?= $i ?>" onclick="displayOntology('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
-<br/>
+<!--<br/>-->
 
 <?php
     $i = $i + 1;
@@ -84,7 +84,7 @@ foreach ($preferences_text as $e) {
 
 <?= $i ?>
 <input type="radio" name="preference" value="<?= $i ?>" onclick="displayPreference('<?= preg_replace("/[\n\r]/","",nl2br($e)) ?>')" />
-<br/>
+<!--<br/>-->
 
 <?php
     $i = $i + 1;

@@ -34,6 +34,7 @@ body
 
 #services
 { 
+        width: 300px;
 	padding-right: 11px;
 	float: left;
 	/*width: 950px; */
