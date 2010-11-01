@@ -114,14 +114,15 @@ def parse(file):
 ################################################################################
 
 def preference_cost_file(preflist, t, copies):
-    if not preflist:
-        return t
+    if not preflist and preflist != []:
+        return None
 
     with NamedTemporaryFile(prefix="ssdsat.", suffix=".costs", delete = False) as cost_file:
         cost_filename = cost_file.name
 
         print >> cost_file, len(preflist)*copies
 
+        #TODO aqui debe haber un issue con los copies, revisar
         for (i, p) in enumerate(preflist):
             print >> cost_file, "{0} {1}".format(t.vs['pref', i], p.cost)
 
