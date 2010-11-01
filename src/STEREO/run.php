@@ -148,9 +148,6 @@ else
       echo "Showing <strong>$number_results</strong> out of <strong>$model_count</strong> total rewritings.<br/>";
       echo "Results obtained in <strong>$rounded</strong> seconds.<br/>";
 
-      $number_results = 1;
-      $model_count = 2;
-
       if ($number_results < $model_count)
       {
           $time_mymodels = (double) trim(file_get_contents($outputfilenames . ".out.time"));
