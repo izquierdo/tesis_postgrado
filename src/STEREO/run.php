@@ -5,6 +5,8 @@
 
 function RunSsdsat($queryfile, $viewfile, $ontologyfile)
 {
+    global $outputfilenames;
+
     $qb = basename($queryfile);
     $vb = basename($viewfile);
     $ob = basename($ontologyfile);
@@ -133,10 +135,14 @@ else
 
 <br/>
 
+<?php
+      $dlfiles = basename($outputfilenames);
+?>
+
 <ul>
-<li>Download the <a href="">human-readable CNF file and debugging output</a></li>
-<li>Download the generated <a href="">CNF file</a> for this instance</li>
-<li>Download the compiled <a href="">NNF file</a></li>
+<li>Download the <a href="<?php echo "/STEREO/download/$dlfiles.out"; ?>">human-readable CNF file and debugging output</a></li>
+<li>Download the generated <a href="<?php echo "/STEREO/download/$dlfiles.cnf"; ?>">CNF file</a> for this instance</li>
+<li>Download the compiled <a href="<?php echo "/STEREO/download/$dlfiles.cnf.nnf"; ?>">NNF file</a></li>
 </ul>
 
 <?php include 'include/footer.html'; ?>
