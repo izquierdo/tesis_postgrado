@@ -167,7 +167,7 @@ else
           else
               $time_allmodels = max(((double)$model_count)/((double)$number_results) * $time_mymodels, 0);
 
-          echo "Estimated time needed to enumerate all results: <strong>$time_allmodels</strong> seconds.<br/>";
+          echo "Estimated time needed to enumerate all results (assuming NNF file is available): <strong>$time_allmodels</strong> seconds.<br/>";
       }
 ?>
 
