@@ -40,7 +40,6 @@ def mcd_theory(query, views, ontology):
     add_clauses_C10(query, views, ontology, t)
     add_clauses_C11(query, views, ontology, t)
     add_clauses_C12(query, views, ontology, t)
-    add_clauses_C13(query, views, ontology, t)
     add_clauses_C14(query, views, ontology, t)
 
     # extra clauses (not appearing in the McdSat paper)
@@ -55,8 +54,9 @@ def mcd_theory(query, views, ontology):
     add_clauses_D2(query, views, ontology, t)
     add_clauses_D3(query, views, ontology, t)
 
-    # C8 clauses are dependent on existing 't' variables
+    # clauses that are dependent on existing 't' variables
     add_clauses_C8(query, views, ontology, t)
+    add_clauses_C13(query, views, ontology, t)
 
     return t
 
@@ -301,6 +301,12 @@ def add_clauses_C13(query, views, ontology, t):
                     continue
 
                 for y in v.argset():
+                    if ('t', x, y, i) not in t.vs:
+                        continue
+
+                    if ('t', xp, y, i) not in t.vs:
+                        continue
+
                     clause = [-t.vs['v', i], -t.vs['t', x, y, i],
                             -t.vs['t', xp, y, i]]
                     t.add_clause(clause)
