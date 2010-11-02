@@ -82,7 +82,7 @@ def bestrw(views, queries, ontology, costs, preflist):
     nnf_filename = compile_ddnnf(pref_rw_t)
 
     # generate the the cost file
-    cost_file = preferences.preference_cost_file(preflist, pref_rw_t, len(views))
+    cost_file = preferences.preference_cost_file(preflist if preflist else [], pref_rw_t, len(views))
 
     # find the best model of the d-DNNF theory and its cost
     (cost, model) = enumerate_best_model(nnf_filename, cost_file)
