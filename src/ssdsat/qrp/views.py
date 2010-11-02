@@ -57,11 +57,32 @@ class Predicate:
 
         if ontology:
             for (child, parent, binding) in ontology.specs:
-                if self.name == parent.name and self.arity == parent.arity:
-                    if other.name == child.name and other.arity == child.arity:
-                        return zip(self.arguments, parent.arguments) + \
-                                list(binding) + \
-                                zip(child.arguments, other.arguments)
+                if self.name != parent.name or self.arity != parent.arity:
+                    continue
+
+                if other.name != child.name or other.arity != child.arity:
+                    continue
+
+                l = []
+                mapped_child = {}
+
+                for (i, arg) in enumerate(child.arguments):
+                    if arg.constant:
+                        l.append((arg, other.arguments[i]))
+                    else:
+                        mapped_child.setdefault(arg, set()).add(other.arguments[i])
+
+                for (i, arg) in enumerate(parent.arguments):
+                    # if ontology is correct, arg should always be a key in mapped_child
+                    if arg.constant:
+                        l.append((self.arguments[i], arg))
+                    else:
+                        for newarg in mapped_child[arg]:
+                            l.append((self.arguments[i], newarg))
+
+                #TODO faltan variables que aparecen en child.arguments pero no en self.arguments
+
+                return l
 
         return None
 
