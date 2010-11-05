@@ -420,6 +420,36 @@ def add_clauses_D4(query, views, ontology, t):
 
     logging.debug("adding clauses of type D4")
 
+    updated = True
+
+    while updated:
+        updated = False
+
+        for (i, v) in enumerate(views, 1):
+            for A in query.constset():
+                for x in query.varset():
+                    for y in v.argset():
+                        for z in v.argset():
+                            if y == z:
+                                continue
+
+                            if ('t', A, z, i) in t.vs:
+                                continue
+
+                            c = 0
+
+                            if ('t', A, y, i) in t.vs:
+                                c += 1
+
+                            if ('t', x, y, i) in t.vs:
+                                c += 1
+
+                            if ('t', x, z, i) in t.vs:
+                                c += 1
+
+                            t.vs['t', A, z, i]
+                            updated = True
+
     for (i, v) in enumerate(views, 1):
         for A in query.constset():
             for x in query.varset():
@@ -429,10 +459,11 @@ def add_clauses_D4(query, views, ontology, t):
                             continue
 
                         clause = [
-                                -t.vs['t', A, y, i],
-                                -t.vs['t', x, y, i],
-                                -t.vs['t', x, z, i],
-                                t.vs['t', A, z, i]]
+                                -t.vs.get('t', A, y, i),
+                                -t.vs.get('t', x, y, i),
+                                -t.vs.get('t', x, z, i),
+                                t.vs.get('t', A, z, i)]
+
                         t.add_clause(clause)
 
 def add_clauses_D5(query, views, ontology, t):
@@ -442,6 +473,36 @@ def add_clauses_D5(query, views, ontology, t):
     """
 
     logging.debug("adding clauses of type D5")
+
+    updated = True
+
+    while updated:
+        updated = False
+
+        for (i, v) in enumerate(views, 1):
+            for A in v.constset():
+                for x in v.varset():
+                    for y in query.argset():
+                        for z in query.argset():
+                            if y == z:
+                                continue
+
+                            if ('t', z, A, i) in t.vs:
+                                continue
+
+                            c = 0
+
+                            if ('t', y, A, i) in t.vs:
+                                c += 1
+
+                            if ('t', y, x, i) in t.vs:
+                                c += 1
+
+                            if ('t', z, x, i) in t.vs:
+                                c += 1
+
+                            t.vs['t', z, A, i]
+                            updated = True
 
     for (i, v) in enumerate(views, 1):
         for A in v.constset():
