@@ -175,7 +175,7 @@ def add_clauses_C7(query, views, ontology, t):
 
     for (i, v) in enumerate(views, 1):
         for j in xrange(1, len(query.body)+1):
-            or_zs = [t.vs.get('z', j, k, i) for k in xrange(1, len(v.body)+1)]
+            or_zs = filter(None, [t.vs.get('z', j, k, i) for k in xrange(1, len(v.body)+1)])
             imply_clause = [-t.vs['v', i], -t.vs['g', j]] + or_zs
             t.add_clause(imply_clause)
 
