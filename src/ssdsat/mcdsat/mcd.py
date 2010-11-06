@@ -195,14 +195,22 @@ def add_clauses_C8(query, views, ontology, t):
     global appearsV
     logging.debug("adding clauses of type C8")
 
-    for var in t.vs.by_type('t'):
-        for i in xrange(1,len(views)+1):
-            appearsV.setdefault(i, set())
-            if var not in appearsV[i]:
-                continue
+    #for var in t.vs.by_type('t'):
+        #for i in xrange(1,len(views)+1):
+            #if var in appearsV[i]:
+                #continue
 
-            clause = [-t.vs['v', i], -t.vs[var]]
-            t.add_clause(clause)
+            #clause = [-t.vs['v', i], -t.vs[var]]
+            #t.add_clause(clause)
+    
+    for var in t.vs.by_type('t'):
+        l = []
+
+        for i in xrange(1, len(views)+1):
+            if var in appearsV[i]:
+                l.append(t.vs['v', i])
+
+        t.add_clause([-t.vs[var]] + l)
 
 def add_clauses_C9(query, views, ontology, t):
     """
