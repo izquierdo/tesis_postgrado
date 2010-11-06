@@ -198,7 +198,7 @@ def add_clauses_C8(query, views, ontology, t):
     for var in t.vs.by_type('t'):
         for i in xrange(1,len(views)+1):
             appearsV.setdefault(i, set())
-            if var in appearsV[i]:
+            if var not in appearsV[i]:
                 continue
 
             clause = [-t.vs['v', i], -t.vs[var]]
