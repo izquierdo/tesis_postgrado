@@ -20,6 +20,7 @@ from sat.cnf import Theory
 from itertools import combinations
 
 appearsV = {}
+appearsV[70]={}
 
 def mcd_theory(query, views, ontology):
     """
@@ -479,6 +480,18 @@ def add_clauses_D4(query, views, ontology, t):
                         if y == z:
                             continue
 
+                        if not ('t', A, y) in appearsV[i]:
+                            continue
+
+                        if not ('t', x, y) in appearsV[i]:
+                            continue
+
+                        if not ('t', x, z) in appearsV[i]:
+                            continue
+
+                        if not ('t', A, z) in appearsV[i]:
+                            continue
+
                         toadd.add((
                                 -t.vs.get('t', A, y),
                                 -t.vs.get('t', x, y),
@@ -534,6 +547,18 @@ def add_clauses_D5(query, views, ontology, t):
                 for y in query.argset():
                     for z in query.argset():
                         if y == z:
+                            continue
+
+                        if not ('t', y, A) in appearsV[i]:
+                            continue
+
+                        if not ('t', y, x) in appearsV[i]:
+                            continue
+
+                        if not ('t', z, x) in appearsV[i]:
+                            continue
+
+                        if not ('t', z, A) in appearsV[i]:
                             continue
 
                         toadd.add((
