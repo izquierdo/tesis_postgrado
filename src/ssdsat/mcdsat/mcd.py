@@ -35,9 +35,7 @@ def mcd_theory(query, views, ontology):
     add_clauses_C2(query, views, ontology, t)
     add_clauses_C3(query, views, ontology, t)
     add_clauses_C4(query, views, ontology, t)
-    add_clauses_C5(query, views, ontology, t)
     add_clauses_C6(query, views, ontology, t)
-    add_clauses_C7(query, views, ontology, t)
     add_clauses_C9(query, views, ontology, t)
     add_clauses_C10(query, views, ontology, t)
     add_clauses_C11(query, views, ontology, t)
@@ -59,6 +57,10 @@ def mcd_theory(query, views, ontology):
     # clauses that are dependent on existing 't' variables
     add_clauses_C8(query, views, ontology, t)
     add_clauses_C13(query, views, ontology, t)
+
+    # clauses that are dependent on existing 'z' variables
+    add_clauses_C5(query, views, ontology, t)
+    add_clauses_C7(query, views, ontology, t)
 
     return t
 
@@ -123,7 +125,7 @@ def add_clauses_C5(query, views, ontology, t):
     for j in xrange(1, len(query.body)+1):
         for (i, v) in enumerate(views, 1):
             for k, l in combinations(xrange(1, len(v.body)+1), r=2):
-                clause = [-t.vs['z', j, k, i], -t.vs['z', j, l, i]]
+                clause = [-t.vs.get('z', j, k, i), -t.vs.get('z', j, l, i)]
                 t.add_clause(clause)
 
 def add_clauses_C6(query, views, ontology, t):
@@ -172,15 +174,15 @@ def add_clauses_C7(query, views, ontology, t):
 
     for (i, v) in enumerate(views, 1):
         for j in xrange(1, len(query.body)+1):
-            or_zs = [t.vs['z', j, k, i] for k in xrange(1, len(v.body)+1)]
+            or_zs = [t.vs.get('z', j, k, i) for k in xrange(1, len(v.body)+1)]
             imply_clause = [-t.vs['v', i], -t.vs['g', j]] + or_zs
             t.add_clause(imply_clause)
 
             for k in xrange(1, len(v.body)+1):
-                view_clause = [-t.vs['z', j, k, i], t.vs['v', i]]
+                view_clause = [-t.vs.get('z', j, k, i), t.vs['v', i]]
                 t.add_clause(view_clause)
 
-                goal_clause = [-t.vs['z', j, k, i], t.vs['g', j]]
+                goal_clause = [-t.vs.get('z', j, k, i), t.vs['g', j]]
                 t.add_clause(goal_clause)
 
 def add_clauses_C8(query, views, ontology, t):
@@ -291,9 +293,9 @@ def add_clauses_C12(query, views, ontology, t):
                         appearsV.setdefault(i, set()).add(('t',x,y))
                         clause = [-t.vs['v', i], -t.vs['z', j, k, i], t.vs['t', x, y]]
                         t.add_clause(clause)
-                else:
-                    clause = [-t.vs['v', i], -t.vs['z', j, k, i]]
-                    t.add_clause(clause)
+                #else:
+                    #clause = [-t.vs['v', i], -t.vs.get('z', j, k, i)]
+                    #t.add_clause(clause)
 
 def add_clauses_C13(query, views, ontology, t):
     """
@@ -362,7 +364,7 @@ def add_clauses_E1(query, views, ontology, t):
                     for (x, y) in mapping:
                         global appearsV
                         appearsV.setdefault(i, set()).add(('t',x,y))
-                        needed.setdefault((-t.vs['v', i], -t.vs['t', x, y]), []).append(t.vs['z', j, k, i])
+                        needed.setdefault((-t.vs['v', i], -t.vs['t', x, y]), []).append(t.vs.get('z', j, k, i))
 
     for ((v_var, t_var), z_vars) in needed.iteritems():
         t.add_clause([v_var, t_var] + z_vars)
