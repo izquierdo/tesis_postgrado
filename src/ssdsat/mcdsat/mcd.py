@@ -19,6 +19,8 @@ import logging
 from sat.cnf import Theory
 from itertools import combinations
 
+appearsV = {}
+
 def mcd_theory(query, views, ontology):
     """
     Generate and return the logical theory for an MCD given a query and a
@@ -187,12 +189,13 @@ def add_clauses_C8(query, views, ontology, t):
     Formula: v_i => -t_{x,y} for all x, y with y not in view i
     """
 
+    global appearsV
     logging.debug("adding clauses of type C8")
 
     for var in t.vs.by_type('t'):
-        for i in xrange(len(views)+1):
-            if i == var[-1]:
-                # this is a mapping used for view i
+        for i in xrange(1,len(views)+1):
+            appearsV.setdefault(i, set())
+            if var in appearsV[i]:
                 continue
 
             clause = [-t.vs['v', i], -t.vs[var]]
@@ -210,7 +213,11 @@ def add_clauses_C9(query, views, ontology, t):
         for (i, v) in enumerate(views, 1):
             for y, yp in combinations(v.varset(), r=2):
                 if v.is_existential(y) and v.is_existential(yp):
-                    or_ts =  [-t.vs['t', x, y, i], -t.vs['t', x, yp, i]]
+                    global appearsV
+                    appearsV.setdefault(i, set()).add(('t',x,y))
+                    appearsV.setdefault(i, set()).add(('t',x,yp))
+
+                    or_ts =  [-t.vs['t', x, y], -t.vs['t', x, yp]]
                     clause = [-t.vs['v', i]] + or_ts
                     t.add_clause(clause)
 
@@ -232,7 +239,9 @@ def add_clauses_C10(query, views, ontology, t):
                 if query.is_existential(x):
                     continue
 
-            clause = [-t.vs['v', i], -t.vs['t', x, y, i]]
+            global appearsV
+            appearsV.setdefault(i, set()).add(('t',x,y))
+            clause = [-t.vs['v', i], -t.vs['t', x, y]]
             t.add_clause(clause)
 
 def add_clauses_C11(query, views, ontology, t):
@@ -257,7 +266,9 @@ def add_clauses_C11(query, views, ontology, t):
                     if x not in g.arguments:
                         continue
 
-                    clause = [-t.vs['v', i], -t.vs['t', x, y, i], t.vs['g', j]]
+                    global appearsV
+                    appearsV.setdefault(i, set()).add(('t',x,y))
+                    clause = [-t.vs['v', i], -t.vs['t', x, y], t.vs['g', j]]
                     t.add_clause(clause)
 
 def add_clauses_C12(query, views, ontology, t):
@@ -276,7 +287,9 @@ def add_clauses_C12(query, views, ontology, t):
 
                 if mapping:
                     for (x, y) in mapping:
-                        clause = [-t.vs['v', i], -t.vs['z', j, k, i], t.vs['t', x, y, i]]
+                        global appearsV
+                        appearsV.setdefault(i, set()).add(('t',x,y))
+                        clause = [-t.vs['v', i], -t.vs['z', j, k, i], t.vs['t', x, y]]
                         t.add_clause(clause)
                 else:
                     clause = [-t.vs['v', i], -t.vs['z', j, k, i]]
@@ -301,14 +314,16 @@ def add_clauses_C13(query, views, ontology, t):
                     continue
 
                 for y in v.argset():
-                    if ('t', x, y, i) not in t.vs:
+                    if ('t', x, y) not in t.vs:
                         continue
 
-                    if ('t', xp, y, i) not in t.vs:
+                    if ('t', xp, y) not in t.vs:
                         continue
 
-                    clause = [-t.vs['v', i], -t.vs['t', x, y, i],
-                            -t.vs['t', xp, y, i]]
+                    global appearsV
+                    appearsV.setdefault(i, set()).add(('t',x,y))
+                    appearsV.setdefault(i, set()).add(('t',xp,y))
+                    clause = [-t.vs['v', i], -t.vs['t', x, y], -t.vs['t', xp, y]]
                     t.add_clause(clause)
 
 
@@ -345,7 +360,9 @@ def add_clauses_E1(query, views, ontology, t):
 
                 if mapping:
                     for (x, y) in mapping:
-                        needed.setdefault((-t.vs['v', i], -t.vs['t', x, y, i]), []).append(t.vs['z', j, k, i])
+                        global appearsV
+                        appearsV.setdefault(i, set()).add(('t',x,y))
+                        needed.setdefault((-t.vs['v', i], -t.vs['t', x, y]), []).append(t.vs['z', j, k, i])
 
     for ((v_var, t_var), z_vars) in needed.iteritems():
         t.add_clause([v_var, t_var] + z_vars)
@@ -372,10 +389,10 @@ def add_clauses_D1(query, views, ontology, t):
     logging.debug("adding clauses of type D1")
 
     for (va, vb) in combinations(t.vs.by_type('t'), r=2):
-        (xa, A, na) = (va[1], va[2], va[3])
-        (xb, B, nb) = (vb[1], vb[2], vb[3])
+        (xa, A) = (va[1], va[2])
+        (xb, B) = (vb[1], vb[2])
 
-        if xa == xb and na == nb and A.constant and B.constant and A != B:
+        if xa == xb and A.constant and B.constant and A != B:
             clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 
@@ -389,10 +406,10 @@ def add_clauses_D2(query, views, ontology, t):
     logging.debug("adding clauses of type D2")
 
     for (va, vb) in combinations(t.vs.by_type('t'), r=2):
-        (A, xa, na) = (va[1], va[2], va[3])
-        (B, xb, nb) = (vb[1], vb[2], vb[3])
+        (A, xa) = (va[1], va[2])
+        (B, xb) = (vb[1], vb[2])
 
-        if xa == xb and na == nb and A.constant and B.constant and A != B:
+        if xa == xb and A.constant and B.constant and A != B:
             clause = [-t.vs[va], -t.vs[vb]]
             t.add_clause(clause)
 
@@ -433,22 +450,24 @@ def add_clauses_D4(query, views, ontology, t):
                             if y == z:
                                 continue
 
-                            if ('t', A, z, i) in t.vs:
+                            if ('t', A, z) in t.vs:
                                 continue
 
                             c = 0
 
-                            if ('t', A, y, i) in t.vs:
+                            if ('t', A, y) in t.vs:
                                 c += 1
 
-                            if ('t', x, y, i) in t.vs:
+                            if ('t', x, y) in t.vs:
                                 c += 1
 
-                            if ('t', x, z, i) in t.vs:
+                            if ('t', x, z) in t.vs:
                                 c += 1
 
-                            t.vs['t', A, z, i]
+                            t.vs['t', A, z]
                             updated = True
+
+    toadd = set()
 
     for (i, v) in enumerate(views, 1):
         for A in query.constset():
@@ -458,13 +477,14 @@ def add_clauses_D4(query, views, ontology, t):
                         if y == z:
                             continue
 
-                        clause = [
-                                -t.vs.get('t', A, y, i),
-                                -t.vs.get('t', x, y, i),
-                                -t.vs.get('t', x, z, i),
-                                t.vs.get('t', A, z, i)]
+                        toadd.add((
+                                -t.vs.get('t', A, y),
+                                -t.vs.get('t', x, y),
+                                -t.vs.get('t', x, z),
+                                t.vs.get('t', A, z)))
 
-                        t.add_clause(clause)
+    for (a, b, c, d) in toadd:
+        t.add_clause([a,b,c,d])
 
 def add_clauses_D5(query, views, ontology, t):
     """
@@ -487,22 +507,24 @@ def add_clauses_D5(query, views, ontology, t):
                             if y == z:
                                 continue
 
-                            if ('t', z, A, i) in t.vs:
+                            if ('t', z, A) in t.vs:
                                 continue
 
                             c = 0
 
-                            if ('t', y, A, i) in t.vs:
+                            if ('t', y, A) in t.vs:
                                 c += 1
 
-                            if ('t', y, x, i) in t.vs:
+                            if ('t', y, x) in t.vs:
                                 c += 1
 
-                            if ('t', z, x, i) in t.vs:
+                            if ('t', z, x) in t.vs:
                                 c += 1
 
-                            t.vs['t', z, A, i]
+                            t.vs['t', z, A]
                             updated = True
+
+    toadd = set()
 
     for (i, v) in enumerate(views, 1):
         for A in v.constset():
@@ -512,10 +534,11 @@ def add_clauses_D5(query, views, ontology, t):
                         if y == z:
                             continue
 
-                        clause = [
-                                -t.vs.get('t', y, A, i),
-                                -t.vs.get('t', y, x, i),
-                                -t.vs.get('t', z, x, i),
-                                t.vs.get('t', z, A, i)]
+                        toadd.add((
+                                -t.vs.get('t', y, A),
+                                -t.vs.get('t', y, x),
+                                -t.vs.get('t', z, x),
+                                t.vs.get('t', z, A)))
 
-                        t.add_clause(clause)
+    for (a, b, c, d) in toadd:
+        t.add_clause([a,b,c,d])
