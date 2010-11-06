@@ -18,9 +18,9 @@ import logging
 
 from sat.cnf import Theory
 from itertools import combinations
+from collections import defaultdict
 
-appearsV = {}
-appearsV[70]={}
+appearsV = defaultdict(set)
 
 def mcd_theory(query, views, ontology):
     """
