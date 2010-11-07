@@ -32,15 +32,14 @@ def mcd_theory(query, views, ontology):
 
     t = Theory()
 
+    add_clauses_C12(query, views, ontology, t)
+
     add_clauses_C1(query, views, ontology, t)
     add_clauses_C2(query, views, ontology, t)
     add_clauses_C3(query, views, ontology, t)
     add_clauses_C4(query, views, ontology, t)
     add_clauses_C6(query, views, ontology, t)
     add_clauses_C9(query, views, ontology, t)
-    add_clauses_C10(query, views, ontology, t)
-    add_clauses_C11(query, views, ontology, t)
-    add_clauses_C12(query, views, ontology, t)
     add_clauses_C14(query, views, ontology, t)
 
     # extra clauses (not appearing in the McdSat paper)
@@ -57,6 +56,8 @@ def mcd_theory(query, views, ontology):
 
     # clauses that are dependent on existing 't' variables
     add_clauses_C8(query, views, ontology, t)
+    add_clauses_C10(query, views, ontology, t)
+    add_clauses_C11(query, views, ontology, t)
     add_clauses_C13(query, views, ontology, t)
 
     # clauses that are dependent on existing 'z' variables
@@ -228,7 +229,7 @@ def add_clauses_C9(query, views, ontology, t):
                     appearsV.setdefault(i, set()).add(('t',x,y))
                     appearsV.setdefault(i, set()).add(('t',x,yp))
 
-                    or_ts =  [-t.vs['t', x, y], -t.vs['t', x, yp]]
+                    or_ts =  [-t.vs['t', x, y], -t.vs.get('t', x, yp)]
                     clause = [-t.vs['v', i]] + or_ts
                     t.add_clause(clause)
 
@@ -252,7 +253,7 @@ def add_clauses_C10(query, views, ontology, t):
 
             global appearsV
             appearsV.setdefault(i, set()).add(('t',x,y))
-            clause = [-t.vs['v', i], -t.vs['t', x, y]]
+            clause = [-t.vs['v', i], -t.vs.get('t', x, y)]
             t.add_clause(clause)
 
 def add_clauses_C11(query, views, ontology, t):
@@ -279,7 +280,7 @@ def add_clauses_C11(query, views, ontology, t):
 
                     global appearsV
                     appearsV.setdefault(i, set()).add(('t',x,y))
-                    clause = [-t.vs['v', i], -t.vs['t', x, y], t.vs['g', j]]
+                    clause = [-t.vs['v', i], -t.vs.get('t', x, y), t.vs['g', j]]
                     t.add_clause(clause)
 
 def add_clauses_C12(query, views, ontology, t):
