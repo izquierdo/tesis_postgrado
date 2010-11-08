@@ -11,6 +11,7 @@ $services_files = array(
     $file_prefix . "services1.txt",
     $file_prefix . "services2.txt",
     $file_prefix . "services3.txt",
+    $file_prefix . "services4.txt",
 );
 
 $queries_files = array(
