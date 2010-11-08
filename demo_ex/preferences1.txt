@@ -1,1 +1,1 @@
--10 -r5
+-50 -flight -train

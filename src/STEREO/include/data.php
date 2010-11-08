@@ -10,12 +10,14 @@ $services_files = array(
     $file_prefix . "services0.txt",
     $file_prefix . "services1.txt",
     $file_prefix . "services2.txt",
+    $file_prefix . "services3.txt",
 );
 
 $queries_files = array(
     $file_prefix . "query0.txt",
     $file_prefix . "query1.txt",
     $file_prefix . "query2.txt",
+    $file_prefix . "query3.txt",
 );
 
 $ontologies_files = array(
