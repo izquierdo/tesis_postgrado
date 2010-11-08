@@ -1,0 +1,5 @@
+nat_flight(X, Y) :- flight(X, Y, T), uscity(X), uscity(Y)
+one_way_flight(X, Y) :- flight(X, Y, T)
+nat_train(X, Y) :- train(X, Y, T), uscity(X), uscity(Y)
+to_pa(X) :- flight(X, paris, aa) 
+from_la(x) :- flight(la, X, ua)

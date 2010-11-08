@@ -4,7 +4,7 @@
 # Filenames
 ################################################################################
 
-$file_prefix = "/home/idaniel/ssdsat/demo_ex/";
+$file_prefix = "/home/idaniel/tesis_postgrado/demo_ex/";
 
 $services_files = array(
     $file_prefix . "services0.txt",

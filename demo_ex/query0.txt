@@ -1,0 +1,1 @@
+q(X,Y):-uscity(X),trip(X,U),trip(U,Y),trip(Y,V),trip(V,X)
