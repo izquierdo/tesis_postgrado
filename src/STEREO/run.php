@@ -2,6 +2,7 @@
 <?php include 'include/header.html'; ?>
 
 <?php
+error_reporting(0);
 
 function RunSsdsat($queryfile, $viewfile, $ontologyfile)
 {
