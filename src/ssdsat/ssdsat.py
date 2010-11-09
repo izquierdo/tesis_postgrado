@@ -217,9 +217,9 @@ def count_models(nnf_filename):
     models = models_process.stdout.readlines()
 
     model_count_line = models[3]
-    model_str = re.search("#models=(\d+) ", model_count_line).group(1)
+    model_str = re.search("#models=([\d+-.e]+) ", model_count_line).group(1)
 
-    return int(model_str)
+    return int(float(model_str))
 
 def enumerate_models(nnf_filename):
     """
