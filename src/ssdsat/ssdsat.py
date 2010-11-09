@@ -217,7 +217,11 @@ def count_models(nnf_filename):
     models = models_process.stdout.readlines()
 
     model_count_line = models[3]
-    model_str = re.search("#models=([\d+-.e]+) ", model_count_line).group(1)
+    eln = re.search("#models=([\d+-.e]+) ", model_count_line)
+    if eln:
+        model_str = eln.group(1)
+    else:
+        model_str = 2**32
 
     return int(float(model_str))
 
