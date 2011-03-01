@@ -12,7 +12,7 @@ import ontologies
 
 def usage():
     usage_str = "Usage: {program} -t <target> -v <views> -q <query> [-o <ontology>] [-c <costs>] [-p <prefs>] [-l <cnf output file prefix>]\n"
-    usage_str += " where <target> is one of the following: MCD, RW\n"
+    usage_str += " where <target> is one of the following: MCD, RW, BESTRW\n"
     usage_str += " and all other parameters are filenames\n"
 
     print usage_str.format(program = sys.argv[0]),

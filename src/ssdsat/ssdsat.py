@@ -109,6 +109,9 @@ def rw_rebuild(query, views, theory, model):
     model_goals = {}
     model_mappings = {}
 
+    for n in xrange(len(query.body)):
+        model_mappings[n] = []
+
     for v in model:
         var = theory.vs.rev(v)
         copy = var[-1] # the last element marks the copy number
@@ -140,7 +143,8 @@ def rw_rebuild(query, views, theory, model):
                 args.append("_" + str(newvar))
                 newvar += 1
 
-        goals.append(Predicate(views[model_views[n]-1].head.name, args))
+        if model_views[n] > 0:
+            goals.append(Predicate(views[model_views[n]-1].head.name, args))
 
     return View(query.head, goals)
 

@@ -40,11 +40,11 @@ def mcd_theory(query, views, ontology):
     add_clauses_C4(query, views, ontology, t)
     add_clauses_C6(query, views, ontology, t)
     add_clauses_C9(query, views, ontology, t)
-    add_clauses_C14(query, views, ontology, t)
+    #add_clauses_C14(query, views, ontology, t)
 
     # extra clauses (not appearing in the McdSat paper)
     add_clauses_E1(query, views, ontology, t)
-    add_clauses_E2(query, views, ontology, t)
+    #add_clauses_E2(query, views, ontology, t)
 
     # clauses for constant handling
     add_clauses_D4(query, views, ontology, t) # may create new 't' variables
@@ -251,10 +251,10 @@ def add_clauses_C10(query, views, ontology, t):
                 if query.is_existential(x):
                     continue
 
-            global appearsV
-            appearsV.setdefault(i, set()).add(('t',x,y))
-            clause = [-t.vs['v', i], -t.vs.get('t', x, y)]
-            t.add_clause(clause)
+                global appearsV
+                appearsV.setdefault(i, set()).add(('t',x,y))
+                clause = [-t.vs['v', i], -t.vs.get('t', x, y)]
+                t.add_clause(clause)
 
 def add_clauses_C11(query, views, ontology, t):
     """
@@ -476,8 +476,9 @@ def add_clauses_D4(query, views, ontology, t):
                             if ('t', x, z) in t.vs:
                                 c += 1
 
-                            t.vs['t', A, z]
-                            updated = True
+                            if c == 3:
+                                t.vs['t', A, z]
+                                updated = True
 
     toadd = set()
 
@@ -545,8 +546,9 @@ def add_clauses_D5(query, views, ontology, t):
                             if ('t', z, x) in t.vs:
                                 c += 1
 
-                            t.vs['t', z, A]
-                            updated = True
+                            if c == 3:
+                                t.vs['t', z, A]
+                                updated = True
 
     toadd = set()
 
