@@ -84,3 +84,7 @@ def add_clauses_C22(query, views, t):
             for i, j in permutations(xrange(m), r=2):
                 t.add_clause([-t.vs.get('t', x, A, i),
                              -t.vs.get('t', x, B, j)])
+
+            for i in xrange(m):
+                t.add_clause([-t.vs.get('t', x, A, i),
+                             -t.vs.get('t', x, B, i)])

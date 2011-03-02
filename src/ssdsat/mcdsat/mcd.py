@@ -477,6 +477,7 @@ def add_clauses_D4(query, views, ontology, t):
                                 c += 1
 
                             if c == 3:
+                                appearsV.setdefault(i, set()).add(('t',A,z))
                                 t.vs['t', A, z]
                                 updated = True
 
@@ -547,6 +548,7 @@ def add_clauses_D5(query, views, ontology, t):
                                 c += 1
 
                             if c == 3:
+                                appearsV.setdefault(i, set()).add(('t',z,A))
                                 t.vs['t', z, A]
                                 updated = True
 
