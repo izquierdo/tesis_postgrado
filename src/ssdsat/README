@@ -1,3 +1,15 @@
-Requires
+- Requires
+
 * python
 * ply
+
+- How to run
+
+Usage: ./driver.py -t <target> -v <views> -q <query> [-o <ontology>] [-c <costs>] [-p <prefs>] [-l <cnf output file prefix>]
+ where <target> is one of the following: MCD, RW, BESTRW
+
+- Targets
+
+* MCD: MiniCon Descriptors
+* RW: All rewritings
+* BESTRW: Best rewriting (given preferences)
