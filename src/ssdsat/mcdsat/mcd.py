@@ -58,7 +58,7 @@ def mcd_theory(query, views, ontology):
     add_clauses_C8(query, views, ontology, t)
     add_clauses_C10(query, views, ontology, t)
     add_clauses_C11(query, views, ontology, t)
-    add_clauses_C13(query, views, ontology, t)
+    #add_clauses_C13(query, views, ontology, t)
 
     # clauses that are dependent on existing 'z' variables
     add_clauses_C5(query, views, ontology, t)

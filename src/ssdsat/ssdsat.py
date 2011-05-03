@@ -8,7 +8,7 @@ import mcdsat.mcd
 import mcdsat.rw
 import preferences
 import options
-from qrp.views import View, Predicate
+from qrp.views import View, Predicate, Argument
 
 # Possible SSDSAT targets
 
@@ -63,7 +63,8 @@ def rw(views, queries, ontology, costs, preflist):
         ff.close()
 
     for m in models:
-        print rw_rebuild(queries[0], views, rw_t, m)
+        (v, mapping) = rw_rebuild(queries[0], views, rw_t, m)
+        print "%s, %s" % (v, ", ".join(["%s=%s" % (a,b) for (a,b) in mapping]))
 
 def bestrw(views, queries, ontology, costs, preflist):
     # generate the MCD theory
@@ -146,7 +147,15 @@ def rw_rebuild(query, views, theory, model):
         if model_views[n] > 0:
             goals.append(Predicate(views[model_views[n]-1].head.name, args))
 
-    return View(query.head, goals)
+    mappings = set()
+
+    for n in model_mappings:
+        for (a,b) in model_mappings[n]:
+            view_name = views[model_views[n]-1].head.name
+            nb = Argument("%s_{%s}" % (b.name, view_name), b.constant)
+            mappings.add((a,nb))
+
+    return (View(query.head, goals), mappings)
 
 # External tools
 
