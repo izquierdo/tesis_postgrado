@@ -85,6 +85,7 @@ def main(argv):
     targets["MCD"] = ssdsat.mcd
     targets["RW"] = ssdsat.rw
     targets["BESTRW"] = ssdsat.bestrw
+    targets["COMPILE"] = ssdsat.compile
 
     try:
         f = targets[target]
